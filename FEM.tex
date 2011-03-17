@@ -1,0 +1,158 @@
+\documentclass[a4paper]{article}
+
+\author{Hidde-Jan Jongsma}
+\title{Finite Element Method}
+\date{\today}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+
+\usepackage{tikz}
+
+\newcommand{\Reals}{\mathbb{R}}
+
+\newcommand{\dux}{\frac{\partial u}{\partial x}}
+\newcommand{\duxx}{\frac{\partial^2 u}{\partial x^2}}
+\newcommand{\duxxx}{\frac{\partial^3 u}{\partial x^3}}
+
+\newcommand{\duy}{\frac{\partial u}{\partial y}}
+\newcommand{\duyy}{\frac{\partial^2 u}{\partial y^2}}
+\newcommand{\duyyy}{\frac{\partial^3 u}{\partial y^3}}
+\newcommand{\lapu}{\nabla^2 u}
+
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+
+\newcommand{\LO}{\ensuremath{L_2(\Omega)}}
+\newcommand{\HO}{\ensuremath{H^1(\Omega)}}
+\newcommand{\HOzero}{\ensuremath{H^1_{(0}(\Omega)}}
+
+
+\begin{document}
+
+Introduction
+
+\section{Finite Element Method in one dimension}
+
+When searching for an approximate solution to the Helmholtz problem
+using a Finite Element approach, we aim to approximate a function
+$u$ by constructing a finite linear system and solving the linear
+equations. For this approximation to be possible, we want to
+restrict our search space for $U(x) \approx u(x)$ to a finite dimensional
+function space.
+
+In this section, we will show how an approximation for $u$ can be found
+using the \emph{Galerkin finite element method} in both
+one and higher dimensions. We will give error estimates in both
+cases and we will address the problems that arise when
+dealing with heavily oscillating functions.
+
+\subsection{Search space}
+
+Suppose we have a bounded domain in $\Reals^n$, $n = 1, 2, 3$.
+We define the function space $\LO$ of square integrable
+function on $\Omega$ by saying that $f \in \LO$ if
+\begin{equation}
+  \lVert f \rVert := \left( \int_\Omega | f(x) |^2 d\Omega \right)^{\frac{1}{2}} < \infty.
+\end{equation}
+We define the \emph{Sobolev space} $\HO$ by saying $f \in \HO$ if
+\begin{equation}
+  \lVert \nabla f \rVert^2 + \lVert f \rVert^2 < \infty.
+\end{equation}
+Finaly, we say $f \in \HOzero$ if $f \in \HO$ and $f(0) = 0$.
+
+\subsection{Exact solution}
+
+As an example, we will consider a simple one dimensional wave
+problem. Suppose we have the following conditions for
+a time-harmonic function $u(x)$ on $[0, 1]$:
+\begin{equation}
+  \begin{dcases*}
+    - \frac{d^2u}{dx^2} - k^2 u = f & on $\Omega = (0, 1)$ \\
+    u(0) = 0 \label{eq:dirbc} & \\
+    \frac{du}{dx}(1) - i k u(1) = 0 \label{eq:impbc} &
+  \end{dcases*}
+\end{equation}
+where we have a Dirichlet boundary condition at $x = 0$ and
+an impedance or Robin boundary equation in $x = 1$.
+Here, the forcing term $f \in \LO$.
+
+It can be shown that the exact solution to is given by
+\begin{equation}
+  u(x) = \frac{e^{ikx}}{k} \int^x_0 \sin(ks)f(s) ds
+          + \frac{\sin(kx)}{k} \int^1_x e^{iks} f(s) ds,
+\end{equation}
+which is periodic with wavelenth $\lambda = \frac{2\pi}{k}$.
+While this problem has a simple solution, exact solutions
+to more complex and higher order problems are difficult,
+nigh impossible to find in a simmilar matter.
+
+For solving the above system with a finite element method,
+we will first rewrite the problem in its weak form.
+We multiply both sides with a test function $v \in \HOzero$
+and integrate afterwards to obtain
+\begin{equation}
+  - \int^1_0 u''(x)v(x) - k^2u(x)v(x) dx = \int^1_0 f(x)v(x) dx.
+\end{equation}
+We integrate the first term by part to get
+\begin{equation}
+  [-u'(x)v(x)]^1_0 + \int^1_0 u'(x)v'(x)dx - k^2 \int^1_0 u(x)v(x) dx = \int^1_0 f(x)v(x) dx.
+\end{equation}
+By subsituting the impedance boundary condition \eqref{eq:impbc} and
+taking the fact that $v(0) = (0)$ into consideration, we obtain
+\begin{equation} \label{eq:weakprob}
+  \int^1_0 u'(x)v'(x)dx - k^2 \int^1_0 u(x)v(x) dx - iku(1)v(1) = \int^1_0 f(x)v(x) dx.
+\end{equation}
+
+\subsection{Galerking finite element method}
+
+To solve \eqref{eq:weakprob}, we will start by defining a finite element
+mesh
+\begin{equation}
+  X_h := \{ x_i ; 0 = x_0 < x_1 < \hdots < x_N = 1 \},
+\end{equation}
+on $\Omega = (0, 1)$. For simplicity, we will use a \emph{uniform}
+mesh, where all elements $x_i$ have size $h = 1/N$.
+We limit our search space to $S_h(0,1) \subset \HOzero$ as the
+space of piecewise continuous linear functions with nodal values
+at points in $X_h$, satisfying \eqref{eq:dirbc} at $x = 0$.
+This function space is spanned by the set of hat functions
+defined as
+\begin{equation}
+  \chi_j(x) = \begin{dcases*}
+    \frac{1}{h} (x - x_{j - 1}), & $x \in [x_{j - 1}, x_j],$ \\
+    \frac{1}{h} (x_{j + 1} - x), & $x \in [x_{j}, x_{j + 1}],$ \\
+    0 & elsewhere,
+  \end{dcases*}
+\end{equation}
+for $j = 1, 2, \ldots, N - 1$ and for $j = N$ by
+\begin{equation}
+  \chi_N(x) = \begin{dcases*}
+    \frac{1}{h} (x - x_{j - 1}), & $x \in [x_{j - 1}, 1],$ \\
+    0 & elsewhere,
+  \end{dcases*}
+\end{equation}
+Now we search for an approximate solution by requiring
+$U, v \in S_h(0,1)$.
+
+\subsection{Linear system}
+
+\subsection{Error estimates}
+
+
+\section{Higher dimensional problem}
+
+\subsection{Linear system}
+
+\subsection{Mesh generation}
+
+
+\section{Unbounded domains}
+
+\subsection{Absorbing boundary conditions}
+
+
+\section{Large wavenumbers and error estimates}
+
+\end{document}
