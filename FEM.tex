@@ -27,6 +27,8 @@
 \newcommand{\duyyy}{\frac{\partial^3 u}{\partial y^3}}
 \newcommand{\lapu}{\nabla^2 u}
 
+\newcommand{\vct}{\mathbf}
+
 \providecommand{\abs}[1]{\lvert#1\rvert}
 \providecommand{\norm}[1]{\lVert#1\rVert}
 
@@ -36,134 +38,6 @@
 
 
 \begin{document}
-
-Introduction
-
-\section{Finite element method}
-
-For the simple, one dimensional case, the exact solution to the
-Helmholtz problem is know. Finding the exact solution for more complex
-and higher dimensional problems turns out to be hard and impractical.
-Often, an approximation to the exact solution suffices for engineering
-purposes. A widly used method to find such approximations is know as
-the \emph{Galerkin finite element method}.
-
-Using this method, an approximation to the real solution is found by
-transforming the problem in a system linear equations.  This results
-in a sparse linear system for which many solving techniques have been
-studied \cite{}. Although the linear systems resulting from this
-method are sparse, for an accurate aproximation of solution to higher
-dimensional or heavily oscillating problems a very large sytem can be
-needed.
-
-%When searching for an approximate solution to the Helmholtz problem
-%using a Finite Element approach, we aim to approximate a function
-%$u$ by constructing a finite linear system and solving the linear
-%equations. For this approximation to be possible, we want to
-%restrict our search space for $U(x) \approx u(x)$ to a finite dimensional
-%function space.
-%
-%In this section, we will show how an approximation for $u$ can be found
-%using the \emph{Galerkin finite element method} in both
-%one and higher dimensions. We will give error estimates in both
-%cases and we will address the problems that arise when
-%dealing with heavily oscillating functions.
-
-\subsection{One dimensional Helmholtz problem}
-
-As an example, we will consider a simple one dimensional wave problem.
-Suppose we have the following conditions for $u(x)$ on $[0, 1]$:
-\begin{align}
-    - \frac{d^2u}{dx^2} - k^2 u
-      & = f, \quad \text{on}\ \Omega = (0, 1), \\
-    u(0) & = 0, \label{eq:dirbc} \\
-    \frac{du}{dx}(1) - i k u(1) & = 0. \label{eq:impbc} &
-\end{align}
-It can be shown that the exact solution to is given by
-\begin{equation}
-  u(x) = \frac{e^{ikx}}{k} \int^x_0 \sin(ks)f(s) ds
-          + \frac{\sin(kx)}{k} \int^1_x e^{iks} f(s) ds,
-\end{equation}
-which is periodic with wavelenth $\lambda = \frac{2\pi}{k}$.
-
-While this problem has a simple solution, exact solutions to more
-complex and higher order problems are difficult, nigh impossible to
-find in a simmilar matter. To find a good approximation, we have to
-restrict the problem to one that can be solved with a computer.
-
-\subsection{Galerking finite element method}
-
-Since the original problem is infinite dimensional, we simplify the
-problem by restricting the approximation of the real solution to a
-finite dimensional search space. Suppose we have a bounded domain
-$\Omega \subset \Reals^n$, $n = 1, 2, 3$.  We define the function
-space $\LO$ of square integrable function on $\Omega$ by saying that
-$f \in \LO$ if
-\begin{equation}
-  \lVert f \rVert := \left(
-    \int_\Omega | f(x) |^2 d\Omega \right)^{\frac{1}{2}} < \infty.
-\end{equation}
-Furthermore, we say $f \in \HOzero$ if $f(0) = 0$ and
-\begin{equation}
-  \lVert \nabla f \rVert^2 + \lVert f \rVert^2 < \infty.
-\end{equation}
-
-For solving the above system with a finite element method, we will
-first rewrite the problem in its weak form.  We multiply both sides
-with a test function $v \in \HOzero$ and integrate afterwards to
-obtain
-\begin{equation}
-  - \int^1_0 u''(x)v(x) - k^2u(x)v(x) dx = \int^1_0 f(x)v(x) dx.
-\end{equation}
-By substituting boundary condition \eqref{eq:impbc} and taking the fact
-that $v(0) = (0)$ into consideration, we obtain
-\begin{equation} \label{eq:weakprob}
-  \int^1_0 u'(x)v'(x)dx - k^2 \int^1_0 u(x)v(x) dx - iku(1)v(1) = \int^1_0 f(x)v(x) dx.
-\end{equation}
-Instead of solving the above equation for the exact solution $u(x)$,
-we want to approximate it by finding $U(x) \approx u(x)$. To do this,
-we define a finite element mesh $X_h$ on $\Omega$, by
-\begin{equation}
-  X_h := \{ x_i ; x_i = ih, i = 0, 1, \ldots, N \},
-\end{equation}
-where $h = 1/N$.
-We limit our search space to $S_h(0,1) \subset \HOzero$, the space of
-piecewise continuous linear functions with nodal values at the points
-in $X_h$, satisfying \eqref{eq:dirbc}. This function space is spanned
-by the set of hat functions defined as
-\begin{equation}
-  \chi_j(x) = \begin{dcases*}
-    \frac{1}{h} (x - x_{j - 1}), & $x \in [x_{j - 1}, x_j],$ \\
-    \frac{1}{h} (x_{j + 1} - x), & $x \in [x_{j}, x_{j + 1}],$ \\
-    0 & elsewhere,
-  \end{dcases*}
-\end{equation}
-for $j = 1, 2, \ldots, N - 1$ and for $j = N$ by
-\begin{equation}
-  \chi_N(x) = \begin{dcases*}
-    \frac{1}{h} (x - x_{j - 1}), & $x \in [x_{j - 1}, 1],$ \\
-    0 & elsewhere.
-  \end{dcases*}
-\end{equation}
-Now, if we require that both $U$ and $v$ are in  $S_h(0,1)$, then we
-can write
-\begin{equation}
-  U(x) = \sum^N_{j = 1} u_j \chi_j(x),
-\end{equation}
-and \eqref{eq:weakprob} transforms to
-\begin{equation}
-  \sum^N_{j = 1} \left[ \int^1_0 \chi_j'(x) \chi_m'(x) dx
-    - k^2 \int^1_0 \chi_j(x) \chi_m(x) dx \right] u_j
-    - i k u_N \chi_m(1)
-  =
-    \int^1_0 f(x) \chi_m(x) dx,
-\end{equation}
-for $m = 1, 2, \ldots, N$.
-
-\subsection{Linear system}
-
-\subsection{Error estimates}
-
 
 \section{Higher dimensional problem}
 
@@ -178,5 +52,4 @@ for $m = 1, 2, \ldots, N$.
 
 
 \section{Large wavenumbers and error estimates}
-
 \end{document}
