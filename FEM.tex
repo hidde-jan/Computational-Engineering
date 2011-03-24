@@ -18,6 +18,9 @@
 % Extra commands
 \newcommand{\Reals}{\mathbb{R}}
 
+\newcommand{\dd}{\mathrm{d}}
+
+\newcommand{\dun}{\frac{\partial u}{\partial n}}
 \newcommand{\dux}{\frac{\partial u}{\partial x}}
 \newcommand{\duxx}{\frac{\partial^2 u}{\partial x^2}}
 \newcommand{\duxxx}{\frac{\partial^3 u}{\partial x^3}}
@@ -40,6 +43,110 @@
 \begin{document}
 
 \section{Higher dimensional problem}
+
+For higher dimensional problems, again we consider the general
+notations for the Helmholtz problem. For a domain $\Omega \in
+\Reals^2$ with boundary $\Gamma$, the Helmholtz problem is stated as
+follows
+\begin{align}
+  \Delta u + k^2 u & = 0, \quad \text{in}\ \Omega, \\
+  \frac{\partial u}{\partial n} + \beta u & = g, \quad \text{on}\ \Gamma, \label{eq:2Dbc}
+\end{align}
+where $k \in \Reals$, $\beta \in \mathbb{C}$ and
+${\partial}/{\partial n}$ is the outward normal derivative. Note
+that
+\begin{equation*}
+  \frac{\partial u}{\partial n} = \nabla u \cdot n, \quad \label{eq:2DH}
+  \Delta u = \lapu.
+\end{equation*}
+Again, we transform the problem to a weak formulation by first
+multiplying \eqref{eq:2DH} by a test function $v \in \HO$ and
+integrating it to get
+\begin{equation} \label{eq:2Dint}
+  \int_\Omega v \Delta u \ \dd\Omega + \int_\Omega k^2 u v \ \dd\Omega = 0.
+\end{equation}
+By applying Green's identity
+\begin{equation*}
+  \int_\Omega v \Delta u \ \dd \Omega
+  + \int_\Omega \nabla v \cdot \nabla u \ \dd\Omega
+  =
+  \int_\Gamma v(\nabla u \cdot n) \ \dd\Gamma,
+\end{equation*}
+we find that
+\begin{equation*}
+  \int_\Gamma v \dun \ \dd\Gamma
+  - \int_\Omega \nabla v \cdot \nabla u - k^2 u v \ \dd\Omega
+  = 0.
+\end{equation*}
+From multiplying boundary equation \eqref{eq:2Dbc} with $v$ and
+integrating, we obtain
+\begin{equation*}
+  \int_\Gamma v \dun \ \dd\Gamma
+  =
+  - \beta \int_\Gamma u v \ \dd\Gamma
+  + \int_\Gamma v g \ \dd\Gamma.
+\end{equation*}
+By substituting these equations into \eqref{eq:2Dint} we get the weak
+formulation of our problem; find $u \in \HO$ such that
+\begin{equation}
+  \int_\Omega \nabla v \cdot \nabla u - k^2 u v \ \dd\Omega
+  + \beta \int_\Gamma uv \ \dd\Gamma
+  = \int_\Gamma v g \ \dd\Gamma
+\end{equation}
+for all $v \in \HO$.
+
+As for the one dimensional problem, we will restrict our search space
+to a finite dimensional function space $V \subset \HO$. We define $V$
+to be the span of basis functions $\chi_j$, $j = 1, 2, \ldots, N$.
+When we require that $U, v \in V$, we are able to write
+\begin{equation}
+  U(x) = \sum^N_{j = 1} u_j \chi_j(x),
+\end{equation}
+where we have to determine the values of $u_j$. The problem can now be
+reformulated as
+\begin{equation}
+  \sum^N_{j = 1} \left[
+    \int_\Omega \nabla \chi_j \cdot \nabla \chi_m
+    - k^2 \chi_j \chi_m \ \dd\Omega
+    + \beta \int_\Gamma \chi_j \chi_m \ \dd\Gamma
+  \right] u_j
+  =
+  \int_\Gamma \chi_m g \ \dd\Gamma,
+\end{equation}
+for $m = 1, 2, \ldots N$. Expressed as a linear system, this becomes
+\begin{equation*}
+  A \vct{u} = \vct{f},
+\end{equation*}
+where
+\begin{equation*}
+  A = \begin{pmatrix}
+    a_{11} & a_{12} & \hdots  & a_{1N} \\
+    a_{21} & a_{22} & \hdots  & a_{2N} \\
+    \vdots & \vdots & \ddots  & \vdots \\
+    a_{N1} & a_{N2} & \hdots  & a_{NN}
+  \end{pmatrix},
+\quad
+\vct{u} = \begin{pmatrix}
+    u_1 \\
+    u_2 \\
+    \vdots \\
+    u_N
+\end{pmatrix}
+\quad \text{and} \quad
+\vct{f} = \begin{pmatrix}
+    \int_\Gamma \chi_1 g \ \dd\Gamma \\
+    \int_\Gamma \chi_2 g \ \dd\Gamma \\
+    \vdots \\
+    \int_\Gamma \chi_N g \ \dd\Gamma \\
+\end{pmatrix}.
+\end{equation*}
+Here, the matrix entries $a_{jm}$ of $A$ are defined as
+\begin{equation*}
+  a_{jm}
+  = \int_\Omega \nabla \chi_j \cdot \nabla \chi_m
+    - k^2 \chi_j \chi_m \ \dd\Omega
+    + \beta \int_\Gamma \chi_j \chi_m \ \dd\Gamma.
+\end{equation*}
 
 \subsection{Linear system}
 

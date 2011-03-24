@@ -16,6 +16,8 @@
 \usepackage{tikz}
 
 % Extra commands
+\newcommand{\dd}{\mathrm{d}}
+
 \newcommand{\Reals}{\mathbb{R}}
 
 \newcommand{\dux}{\frac{\partial u}{\partial x}}
@@ -44,18 +46,18 @@ Introduction
 \section{Finite element method}
 
 For the simple, one dimensional case, the exact solution to the
-Helmholtz problem is know. Finding the exact solution for more complex
-and higher dimensional problems turns out to be hard and impractical.
-Often, an approximation to the exact solution suffices for engineering
-purposes. A widly used method to find such approximations is know as
-the \emph{Galerkin finite element method}.
+Helmholtz problem is known. Finding the exact solution for more
+complex and higher dimensional problems turns out to be hard and
+impractical.  Often, an approximation to the exact solution suffices
+for engineering purposes. A widely used method to find such
+approximations is known as the \emph{Galerkin finite element method}.
 
-Using this method, an approximation to the real solution is found by
+Using this method, an approximation to the exact solution is found by
 transforming the problem in a system linear equations.  This results
 in a sparse linear system for which many solving techniques have been
 studied \cite{}. Although the linear systems resulting from this
-method are sparse, for an accurate aproximation of solution to higher
-dimensional or heavily oscillating problems a very large sytem can be
+method are sparse, for an accurate approximation of solution to higher
+dimensional or heavily oscillating problems a very large system can be
 needed.
 
 %When searching for an approximate solution to the Helmholtz problem
@@ -76,36 +78,36 @@ needed.
 As an example, we will consider a simple one dimensional wave problem.
 Suppose we have the following conditions for $u(x)$ on $[0, 1]$:
 \begin{align}
-    - \frac{d^2u}{dx^2} - k^2 u
+    - \frac{\dd^2u}{\ \dd x^2} - k^2 u
       & = f, \quad \text{on}\ \Omega = (0, 1), \\
     u(0) & = 0, \label{eq:dirbc} \\
-    \frac{du}{dx}(1) - i k u(1) & = 0. \label{eq:impbc} &
+    \frac{\dd u}{\ \dd x}(1) - i k u(1) & = 0. \label{eq:impbc} &
 \end{align}
 It can be shown that the exact solution to is given by
 \begin{equation}
-  u(x) = \frac{e^{ikx}}{k} \int^x_0 \sin(ks)f(s) ds
-          + \frac{\sin(kx)}{k} \int^1_x e^{iks} f(s) ds,
+  u(x) = \frac{e^{ikx}}{k} \int^x_0 \sin(ks)f(s) \ \dd s
+          + \frac{\sin(kx)}{k} \int^1_x e^{iks} f(s) \ \dd s,
 \end{equation}
-which is periodic with wavelenth $\lambda = \frac{2\pi}{k}$.
+which is periodic with wavelength $\lambda = \frac{2\pi}{k}$.
 
-While this problem has a simple solution, exact solutions to more
-complex and higher order problems are difficult, nigh impossible to
-find in a simmilar matter. To find a good approximation, we have to
-restrict the problem to one that can be solved with a computer.
+While this specific problem has a simple solution, in general, higher
+dimensional problems can only be solved nummericaly. For these complex
+problems, no exact solution is known.
 
 \subsection{Galerking finite element method}
 
 Since the original problem is infinite dimensional, we simplify the
-problem by restricting the approximation of the real solution to a
+problem by restricting the approximation of the exact solution to a
 finite dimensional search space. Suppose we have a bounded domain
 $\Omega \subset \Reals^n$, $n = 1, 2, 3$.  We define the function
 space $\LO$ of square integrable function on $\Omega$ by saying that
 $f \in \LO$ if
 \begin{equation}
   \lVert f \rVert := \left(
-    \int_\Omega | f(x) |^2 d\Omega \right)^{\frac{1}{2}} < \infty.
+    \int_\Omega | f(x) |^2 \ \dd\Omega \right)^{\frac{1}{2}} < \infty.
 \end{equation}
-Furthermore, we say $f \in \HOzero$ if $f(0) = 0$ and
+Furthermore, we say $f \in \HOzero$ if $f(0) = 0$ and $f \in \HO$,
+which implies
 \begin{equation}
   \lVert \nabla f \rVert^2 + \lVert f \rVert^2 < \infty.
 \end{equation}
@@ -115,24 +117,26 @@ first rewrite the problem in its weak form.  We multiply both sides
 with a test function $v \in \HOzero$ and integrate afterwards to
 obtain
 \begin{equation}
-  - \int^1_0 u''(x)v(x) - k^2u(x)v(x) dx = \int^1_0 f(x)v(x) dx.
+  - \int^1_0 u''(x)v(x) - k^2u(x)v(x) \ \dd x = \int^1_0 f(x)v(x) \ \dd x.
 \end{equation}
-By substituting boundary condition \eqref{eq:impbc} and taking the fact
-that $v(0) = (0)$ into consideration, we obtain
+By integrating the first term by parts and substituting boundary
+condition \eqref{eq:impbc} and taking the fact that $v(0) = (0)$ into
+consideration, we obtain
 \begin{equation} \label{eq:weakprob}
-  \int^1_0 u'(x)v'(x)dx - k^2 \int^1_0 u(x)v(x) dx - iku(1)v(1) = \int^1_0 f(x)v(x) dx.
+  \int^1_0 u'(x)v'(x)\ \dd x - k^2 \int^1_0 u(x)v(x) \ \dd x - iku(1)v(1) = \int^1_0 f(x)v(x) \ \dd x.
 \end{equation}
-Instead of solving the above equation for the exact solution $u(x)$,
-we want to approximate it by finding $U(x) \approx u(x)$. To do this,
-we define a finite element mesh $X_h$ on $\Omega$, by
+Now we have the weak formulation of our problem; Find $u(x) \in
+\HOzero$ such that \eqref{eq:weakprob} holds for all $v(x) \in
+\HOzero$.  To solve this problem, first we define a finite element
+mesh $X_h$ on $\Omega$, by
 \begin{equation}
-  X_h := \{ x_i ; x_i = ih, i = 0, 1, \ldots, N \},
+  X_h := \{ x_i \ | \ x_i = ih, \ i = 0, 1, \ldots, N \},
 \end{equation}
 where $h = 1/N$.
 We limit our search space to $S_h(0,1) \subset \HOzero$, the space of
 piecewise continuous linear functions with nodal values at the points
 in $X_h$, satisfying \eqref{eq:dirbc}. This function space is spanned
-by the set of hat functions defined as
+by a set of \emph{hat functions} defined as
 \begin{equation}
   \chi_j(x) = \begin{dcases*}
     \frac{1}{h} (x - x_{j - 1}), & $x \in [x_{j - 1}, x_j],$ \\
@@ -147,54 +151,89 @@ for $j = 1, 2, \ldots, N - 1$ and for $j = N$ by
     0 & elsewhere.
   \end{dcases*}
 \end{equation}
-Now, if we require that both $U$ and $v$ are in  $S_h(0,1)$, then we
-can write
+Since this set of function spans $S_h(0,1)$, they are known als
+\emph{basis functions}. The intervals $\tau_i = (x_{i - 1}, x_i)$ are
+called \emph{finite elements}. In our case, every $\tau_i$ has length
+$h$, hence $X_h$ is called a \emph{uniform} mesh. Now, if we require
+that both $U$ and $v$ are in  $S_h(0,1)$, then we can write
 \begin{equation} \label{eq:Usum}
   U(x) = \sum^N_{j = 1} u_j \chi_j(x),
 \end{equation}
 and \eqref{eq:weakprob} transforms to
 \begin{equation} \label{eq:linsys}
-  \sum^N_{j = 1} \left[ \int^1_0 \chi_j'(x) \chi_m'(x) dx
-    - k^2 \int^1_0 \chi_j(x) \chi_m(x) dx \right] u_j
+  \sum^N_{j = 1} \left[ \int^1_0 \chi_j'(x) \chi_m'(x) \ \dd x
+    - k^2 \int^1_0 \chi_j(x) \chi_m(x) \ \dd x \right] u_j
     - i k u_N \chi_m(1)
   =
-    \int^1_0 f(x) \chi_m(x) dx,
+    \int^1_0 f(x) \chi_m(x) \ \dd x,
 \end{equation}
 for $m = 1, 2, \ldots, N$.
 
 \subsection{Linear system}
 
 Since each $\chi_m$ is known, we can easily compute the integrals in
-\eqref{eq:linsys}. If we substitute these integrals back into the
-equation, the result is a system of linear equations with unknowns
-$u_i$, $i = 1, 2, \ldots, N$. The linear system is given by
+\eqref{eq:linsys}. They are given by
+\begin{equation*}
+  \int^1_0 \chi_j'(x) \chi_m'(x) \ \dd x
+    = \begin{dcases*}
+        0,              & if $|j - m| > 1$,   \\
+        - {1}/{h},  & if $|j - m| = 1$,   \\
+        {2}/{h},    & if $j = m \neq N$,  \\
+        {1}/{h},    & if $j = m = N$,
+      \end{dcases*}
+\end{equation*}
+\begin{equation*}
+  \int^1_0 \chi_j(x) \chi_m(x) \ \dd x
+    = \begin{dcases*}
+        0,    & if $|j - m| > 1$,   \\
+        h/6,  & if $|j - m| = 1$,   \\
+        2h/3, & if $j = m \neq N$,  \\
+        h/3,  & if $j = m = N$.
+      \end{dcases*}
+\end{equation*}
+Also note that
+\begin{equation*}
+  \chi_m(1)
+  = \begin{dcases*}
+      1, & if $m = N$, \\
+      0  & otherwise.
+    \end{dcases*}
+\end{equation*}
+If we substitute these equations back into \eqref{eq:linsys}, the
+result is a system of linear equations with unknowns $u_i$, $i = 1, 2,
+\ldots, N$. This linear system is given by
 \begin{equation}
   (A - k^2 B - i k C)\vct{u} = \vct{f}.
 \end{equation}
-where the matrices are of the form
+Here, the elements of matrices $A$ and $B$ are determined by
+\begin{equation}
+  A_{i j} = \int^1_0 \chi_i'(x) \chi_j'(x) \ \dd x, \quad
+  B_{i j} = \int^1_0 \chi_i(x) \chi_j(x) \ \dd x.
+\end{equation}
+and
 \begin{equation*}
   A = \begin{pmatrix}
-        \frac{2}{h} & - \frac{1}{h} & 0 & & \\
-        - \frac{1}{h} & \frac{2}{h} & - \frac{1}{h} &  \ddots & \\
-        0 &- \frac{1}{h} & \frac{2}{h} & \ddots & 0 \\
-        & \ddots & \ddots & \ddots & - \frac{1}{h} \\
-        & & 0 & - \frac{1}{h} & \frac{1}{h}
+        \frac{2}{h}   & - \frac{1}{h} & 0             & \hdots        & 0             \\
+        - \frac{1}{h} & \frac{2}{h}   & - \frac{1}{h} &  \ddots       & \vdots        \\
+        0             & - \frac{1}{h} & \frac{2}{h}   & \ddots        & 0             \\
+        \vdots        & \ddots        & \ddots        & \ddots        & - \frac{1}{h} \\
+        0             & \hdots        & 0             & - \frac{1}{h} & \frac{1}{h}
       \end{pmatrix},
   \quad
   B = \begin{pmatrix}
-        \frac{2h}{3} & \frac{h}{6} & 0 & & \\
-        \frac{h}{6} & \frac{2h}{3} & \frac{h}{6} &  \ddots & \\
-        0 & \frac{h}{6} & \frac{2h}{3} & \ddots & 0 \\
-        & \ddots & \ddots & \ddots & \frac{h}{6} \\
-        & & 0 & \frac{h}{6} & \frac{h}{3}
+        \frac{2h}{3}  & \frac{h}{6}   & 0             & \hdots      & 0           \\
+        \frac{h}{6}   & \frac{2h}{3}  & \frac{h}{6}   & \ddots      & \vdots      \\
+        0             & \frac{h}{6}   & \frac{2h}{3}  & \ddots      & 0           \\
+        \vdots        & \ddots        & \ddots        & \ddots      & \frac{h}{6} \\
+        0             & \hdots        & 0             & \frac{h}{6} & \frac{h}{3}
       \end{pmatrix},
 \end{equation*}
 \begin{equation*}
   C = \begin{pmatrix}
-        0 & 0       &         & \\
-        0 & 0       & \ddots  & \\
-          & \ddots  & \ddots  & 0 \\
-          &         & 0       & 1
+        0       & 0       & \hdots  & 0       \\
+        0       & 0       & \ddots  & \vdots  \\
+        \vdots  & \ddots  & \ddots  & 0       \\
+        0       & \hdots  & 0       & 1
       \end{pmatrix},
   \quad
   \vct{u} = \begin{pmatrix}
@@ -205,17 +244,12 @@ where the matrices are of the form
             \end{pmatrix},
   \quad
   \vct{f} = \begin{pmatrix}
-              \int^1_0 f(x) \chi_1(x) dx \\
-              \int^1_0 f(x) \chi_2(x) dx \\
+              \int^1_0 f(x) \chi_1(x) \ \dd x \\
+              \int^1_0 f(x) \chi_2(x) \ \dd x \\
               \vdots \\
-              \int^1_0 f(x) \chi_N(x) dx \\
+              \int^1_0 f(x) \chi_N(x) \ \dd x \\
             \end{pmatrix}.
 \end{equation*}
-Here, the elements of matrices $A$ and $B$ are determined by
-\begin{equation}
-  A_{i j} = \int^1_0 \chi_i'(x) \chi_j'(x) dx, \quad
-  B_{i j} = \int^1_0 \chi_i(x) \chi_j(x) dx.
-\end{equation}
 
 We see that the system matrix $(A - k^2 B - i k C)$ is sparce, its
 entries are mostly zero. Furthermore, it is also \emph{tridiagonal},
@@ -244,9 +278,10 @@ A higher wavenumber means higher oscillatory behavior of the exact
 solution. Since the wavelength $\lambda$ is defined as
 $\frac{2\pi}{k}$, the wavelength decreases as $k$ incleases. To keep
 the number of gridpoints per wavelength constant and the approximation
-of $u$ accurate, the stepsize $h$ has to decrease as $k$. This leads
-to bigger systems that have to be solved and a great deal of
-additional computation costs.
+of $u$ accurate, the stepsize $h$ has to decrease as $k$. A common
+idea is to keep the number of gridpoints per wavelength constant, but
+this leads to bigger systems that have to be solved and a great deal
+of additional computation costs.
 
 Another problem that accompanies higher wavenumbers is the
 introduction of pollution errors into the estimate $U$. Errors caused
