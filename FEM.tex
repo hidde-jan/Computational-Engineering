@@ -49,7 +49,7 @@ notations for the Helmholtz problem. For a domain $\Omega \in
 \Reals^2$ with boundary $\Gamma$, the Helmholtz problem is stated as
 follows
 \begin{align}
-  \Delta u + k^2 u & = 0, \quad \text{in}\ \Omega, \\
+  \Delta u + k^2 u & = 0, \quad \text{in}\ \Omega, \label{eq:Duku} \\
   \frac{\partial u}{\partial n} + \beta u & = g, \quad \text{on}\ \Gamma, \label{eq:2Dbc}
 \end{align}
 where $k \in \Reals$, $\beta \in \mathbb{C}$ and
@@ -88,7 +88,7 @@ integrating, we obtain
 \end{equation*}
 By substituting these equations into \eqref{eq:2Dint} we get the weak
 formulation of our problem; find $u \in \HO$ such that
-\begin{equation}
+\begin{equation} \label{eq:2Dweak}
   \int_\Omega \nabla v \cdot \nabla u - k^2 u v \ \dd\Omega
   + \beta \int_\Gamma uv \ \dd\Gamma
   = \int_\Gamma v g \ \dd\Gamma
@@ -99,12 +99,12 @@ As for the one dimensional problem, we will restrict our search space
 to a finite dimensional function space $V \subset \HO$. We define $V$
 to be the span of basis functions $\chi_j$, $j = 1, 2, \ldots, N$.
 When we require that $U, v \in V$, we are able to write
-\begin{equation}
+\begin{equation} \label{eq:Usum2D}
   U(x) = \sum^N_{j = 1} u_j \chi_j(x),
 \end{equation}
 where we have to determine the values of $u_j$. The problem can now be
 reformulated as
-\begin{equation}
+\begin{equation*}
   \sum^N_{j = 1} \left[
     \int_\Omega \nabla \chi_j \cdot \nabla \chi_m
     - k^2 \chi_j \chi_m \ \dd\Omega
@@ -112,7 +112,7 @@ reformulated as
   \right] u_j
   =
   \int_\Gamma \chi_m g \ \dd\Gamma,
-\end{equation}
+\end{equation*}
 for $m = 1, 2, \ldots N$. Expressed as a linear system, this becomes
 \begin{equation*}
   A \vct{u} = \vct{f},
@@ -147,16 +147,147 @@ Here, the matrix entries $a_{jm}$ of $A$ are defined as
     - k^2 \chi_j \chi_m \ \dd\Omega
     + \beta \int_\Gamma \chi_j \chi_m \ \dd\Gamma.
 \end{equation*}
+In the same manner as the one dimensional case, solving the linear
+system and substituting $\vct{u}$ into \eqref{eq:Usum2D} yields our
+approximation $U(x)$ to $u(x)$.
 
 \subsection{Linear system}
 
+An important problem with the application of the finite element method
+is the shape and size of the linear system that needs to be solved.
+When we need to keep our approximation at a certain level of accuracy
+and we increase the number of dimensions, the size of the linear
+system can grow rapidly.
+
+Suppose we want to achieve an accuracy of $0.01$ (i.e.\ 1\%) and our
+error $\tau$ is bounded by $h^2$, with $h = 1/N$ defined as our stepsize in
+each dimension. In the one dimensional case, we would have a total of
+10 elements. Matrix $A$ would be of size $10 \times 10$. In two
+dimensions, the resulting system would have 100 elements and $A$ would
+have size $100 \times 100$. In three dimensions, we would need a $1000
+\times 1000$ matrix for the same accuracy. We see that the number of
+elements increases extremely fast when the number of dimensions in our
+problem grow.
+
+In real applications, the stepsize needed to achieve an accuracy of
+$0.01$ could turn out to be many times smaller than in our example
+above. In these situations, the resulting linear system could grow
+beyond the size at which solving and storing the linear systems with
+current technology becomes impractical. For very large systems, we are
+not able to use direct methods to solve the system. Instead, we have
+to use iterative methods.
+
+The efficiency of these iterative methods depends for a great deal on
+the \emph{bandwith} of the matrix $A$. In the one dimensional case, we
+saw that the bandwith is 3. Although by a suitable choice of basis
+functions $\chi_m$ the matrix $A$ can remain sparse in higher
+dimensions, the bandwidth typically increases with the number of
+dimensions. For a two dimensional problem, the bandwith would be of
+order $N$. For three dimensions, the furthest non-zero element would
+be at a distance of order $N^2$ from the diagonal. Again, this adds to
+the cost of solving large systems using a finite element approach.
+
 \subsection{Mesh generation}
 
+Another important aspect of the finite element method is the
+generation of the mesh (finite elements) on which we define our basis
+functions. In the one dimensional case this is very straightforward
+as described in section \ref{seq:Galerkin}. For two dimensions, there
+exist different commercial and free packages, many of which are based
+on Delaunay triangulation. These algorithms are very effective and
+can produce meshes for a wide range of geometries.
+
+Mesh creation packages for three dimensional problems also exist.
+Again, the difficulty in creating meshes for these problems increases.
+In contrast to the packages for two dimensional meshes, these
+algorithms are not judged on their performance, but on the percentage
+of `problematic' elements they produce.
 
 \section{Unbounded domains}
 
-\subsection{Absorbing boundary conditions}
+The finite elemeht method is a good fit for bounded domains, but to
+extend its application to unbounded domains, we have to put in some
+extra contraints. The way this is done, is by adding an
+additional boundary condition to model the behavior of waves at
+infinity. This condition is called the \emph{Sommerfeld radiation
+condition}. It ensures that no waves are reflected from $\infty$. We
+add the following containstraint to \eqref{eq:Duku};
+\begin{equation}
+  \frac{1}{R^{(d - 1)/2}}
+  \left( \frac{\partial u}{\partial R} - i k u \right)
+  \rightarrow 0, \quad
+  \text{as}\ R \rightarrow \infty, \quad \Omega = \Reals^d,\ d = 1, 2, 3.
+\end{equation}
+Solutions to Helmholtz problems on infinite domains that satisfy this
+contstrains are also called \emph{radiating} solutions.
 
+However, this condition alone does not solve the problem that we have
+to discretize an unbounded domain. Since computers only have a finite
+amount of memory, we need to find a way to discritize an infinite
+amound of space into a finite set of elements. A common approach is to
+add an artificial boundary to the domain, replacing the unbounded
+domain with a bounded one. In order for the solution to the bounded
+problem to be sufficiently close to the solution for the unbounded
+domain, an \emph{absorbing boundary condition} is applied. This
+ensures that there is no reflection or scattering of waves at the
+boundary.
+
+As an example we consider the one dimensional Helmholtz problem on
+$\Omega = \Reals$. The exact solution to the static problem is given
+by
+\begin{equation*}
+  u(x) = A e^{i k x} + B e^{-i k x},
+\end{equation*}
+where $A$ and $B$ are determined by the initial conditions. The
+dynamic solution is given by
+\begin{equation*}
+  P(x, t) = A e^{i(k x - \omega t)} + B e^{-i(k x + \omega t)}
+\end{equation*}
+where $A$ is the amplitude of the wave travelling from $0$ to
+$\infty$, and $B$ is the amplitude of the wave travelling from
+$\infty$ to $0$. Applying the boundary condition
+\begin{equation*}
+  \frac{\omega}{k} \frac{\partial P}{\partial x}(x_0)
+  + \frac{\partial P}{\partial t}(x_0) = 0
+\end{equation*}
+at a point $x_0 \in \Omega$ eliminates the incoming wave. This is
+called a \emph{nonreflecting boundary condition} at $x_0$.
+
+In higher dimensions, construction such a NRBC can be difficult,
+because the direction in which waves travel in the exact solution have
+to be known. In this case a ABC can be used to approximate the NRBC.
+Other methods for solving the Helholtz problem on an unbouded domain
+are the \emph{Perfectly Matched Layers} and the aptly named
+\emph{infinite elements} method [CITE].
 
 \section{Large wavenumbers and error estimates}
+
+For higher dimensional problems, a large wavelength $k$ can cause
+additional problems that can lead to a less accurate approximation to
+the exact solution. One of the approaches used to counter this problem
+is using higher order piecewise polynomial functions instead of
+piecewise linear function. This method is called the $hp$ approach.
+When the search space exists of piecewise polynomial functions of
+order $p$, the error in our approximation is bounded by
+\begin{equation*}
+  \frac{\lVert u - U \rVert}{\lVert u \rVert}
+  \leq C_1 \left( \frac{hk}{2p} \right)^p
+  + C_2 k \left( \frac{hk}{2p} \right)^{2p}.
+\end{equation*}
+Here, the first term represents the \emph{approximation error}, and
+the second term is the \emph{pollution error}, which is caused by
+errors in modeling the exact wavelength propagating through the
+computation of the approximation. We see that an increase in $p$ leads
+to a great reduction of the pollution error, without needing to
+decrease $h$.
+
+Another way to reduce the pollution error is by using specific basic
+functions that provide a good fit for high frequency scattering
+problems. Two methods that use this approach are the \emph{generalized
+finite element methods} and the \emph{partition of unity method}
+[CITE]. One last problem that occurs when $k$ becomes large is the
+highly oscillatory behavior of the integrals in \eqref{eq:2Dweak}.
+The numerical approximations of these integrals becomes more expencive
+as $k$ increases, which increases the pollution error.
+
 \end{document}
