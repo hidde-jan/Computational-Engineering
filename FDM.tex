@@ -1,0 +1,74 @@
+\documentclass[a4paper]{article}
+
+\author{Hidde-Jan Jongsma}
+\title{Finite Element Method}
+\date{\today}
+
+% Extra symbols and enviroments
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+
+% Use full page
+\usepackage{fullpage}
+
+% Create graphics in LaTex
+\usepackage{tikz}
+
+% Extra commands
+\newcommand{\Reals}{\mathbb{R}}
+
+\newcommand{\dd}{\mathrm{d}}
+
+\newcommand{\dun}{\frac{\partial u}{\partial n}}
+\newcommand{\dux}{\frac{\partial u}{\partial x}}
+\newcommand{\duxx}{\frac{\partial^2 u}{\partial x^2}}
+\newcommand{\duxxx}{\frac{\partial^3 u}{\partial x^3}}
+
+\newcommand{\duy}{\frac{\partial u}{\partial y}}
+\newcommand{\duyy}{\frac{\partial^2 u}{\partial y^2}}
+\newcommand{\duyyy}{\frac{\partial^3 u}{\partial y^3}}
+\newcommand{\lapu}{\nabla^2 u}
+
+\newcommand{\vct}{\mathbf}
+
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+
+\newcommand{\LO}{\ensuremath{L_2(\Omega)}}
+\newcommand{\HO}{\ensuremath{H^1(\Omega)}}
+\newcommand{\HOzero}{\ensuremath{H^1_{(0}(\Omega)}}
+
+\begin{document}
+
+\section{Finite difference method}
+
+In the finite difference method, we discetize the exact solution of
+the Helmholtz problem $u(x)$ on a grid $R$ defined on a domain $\Omega
+\subseteq \Reals^d$, $d = 1, 2, 3$. Suppose we have a one dimensional
+problem with $\Omega = (0, 1)$. We want to approximate $u$ in a fixed
+number of points, say $N$. We create a uniform grid
+\begin{equation}
+  X_h = \left\{ x_i\ |\ x_i = h i,\ i = 0, 1, \ldots, N \right\}
+\end{equation}
+where we take our gridsize $h = 1/N$. We denote $u_i = u(x_i)$. Now,
+we want to discretize our equation for $u$ on $\Omega$
+\begin{equation}
+  \frac{\dd^2 u}{\dd x^2} + f u = g, \quad \text{on}\ \Omega.
+\end{equation}
+We can approximate the second derivate of $u$ in a point $x_i$ by
+using the Taylor expansion of $u$ at $x_i$. We can approximate the
+value of $u$ at points $x_{i + 1}$ and $x_{i - 1}$ by
+\begin{align}
+  u_{i + 1} & \approx u_{i} + h \frac{\dd u}{\dd x}
+    + \frac{h^2}{2} \frac{\dd^2 u}{\dd x^2}
+    + \frac{h^3}{6} \frac{\dd^3 u}{\dd x^3}
+    + \frac{h^4}{24} \frac{\dd^4 u}{\dd x^4} \\
+%
+  u_{i - 1} & \approx u_{i} - h \frac{\dd u}{\dd x}
+    + \frac{h^2}{2} \frac{\dd^2 u}{\dd x^2}
+    - \frac{h^3}{6} \frac{\dd^3 u}{\dd x^3}
+    + \frac{h^4}{24} \frac{\dd^4 u}{\dd x^4}
+\end{align}
+
+\end{document}
