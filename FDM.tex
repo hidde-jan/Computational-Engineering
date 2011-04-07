@@ -57,18 +57,47 @@ we want to discretize our equation for $u$ on $\Omega$
   \frac{\dd^2 u}{\dd x^2} + f u = g, \quad \text{on}\ \Omega.
 \end{equation}
 We can approximate the second derivate of $u$ in a point $x_i$ by
-using the Taylor expansion of $u$ at $x_i$. We can approximate the
-value of $u$ at points $x_{i + 1}$ and $x_{i - 1}$ by
+using the Taylor expansion of $u$ at $x_i$. The value of $u$ at points
+$x_{i + 1}$ and $x_{i - 1}$ are given by
 \begin{align}
-  u_{i + 1} & \approx u_{i} + h \frac{\dd u}{\dd x}
+  u_{i + 1} & = u_{i} + h \frac{\dd u}{\dd x}
     + \frac{h^2}{2} \frac{\dd^2 u}{\dd x^2}
     + \frac{h^3}{6} \frac{\dd^3 u}{\dd x^3}
-    + \frac{h^4}{24} \frac{\dd^4 u}{\dd x^4} \\
+    + \frac{h^4}{24} \frac{\dd^4 u}{\dd x^4} 
+    + \mathcal{O}(h^5) \\
 %
-  u_{i - 1} & \approx u_{i} - h \frac{\dd u}{\dd x}
+  u_{i - 1} & = u_{i} - h \frac{\dd u}{\dd x}
     + \frac{h^2}{2} \frac{\dd^2 u}{\dd x^2}
     - \frac{h^3}{6} \frac{\dd^3 u}{\dd x^3}
     + \frac{h^4}{24} \frac{\dd^4 u}{\dd x^4}
+    + \mathcal{O}(h^5).
 \end{align}
+By adding these equations, we obtain an estimate for $\dd^2 u / \dd
+x^2$ in the point $x_i$,
+\begin{equation}
+  \frac{\dd^2 u}{\dd x^2}(x_i)
+  \approx
+    \frac{1}{h^2} \left[ u_{i + 1} - 2 u_i + u_{i - 1} \right].
+\end{equation}
+This method provides an approximation of order $\mathcal{O}(h^2)$,
+since the local error is
+\begin{equation*}
+  - \frac{h^2}{12} \frac{\dd^4 u}{\dd x^4}(x_i).
+\end{equation*}
+When we refine our grid, and let $h \rightarrow 0$, the error in our
+approximation to the exact solution $u$ goes to $0$ as rapidly as
+$h^2$. Of course, the computational effort necessary will increase as
+we make our grid smaller.
+
+\subsection{Five-point formula}
+
+We can easily expand the finite difference approach to two dimensions,
+by approximating $\nabla^2 u = \dd^2 u / \dd x^2 + \dd^2 u / \dd y^2$
+as
+\begin{equation}
+  \nabla^2 u(x, y) \approx \frac{1}{h^2} \left[
+      u(x + h, y) + u(x - h, y) + u(x, y + h)
+      + u(x, y - h) - 4 u(x, y) \right].
+\end{equation}
 
 \end{document}
