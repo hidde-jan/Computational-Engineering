@@ -1,0 +1,530 @@
+%
+%  untitled
+%
+%  Created by Hidde-Jan Jongsma on 2010-10-22.
+%  Copyright (c) 2010 __MyCompanyName__. All rights reserved.
+%
+\documentclass[]{beamer}
+
+% Use utf-8 encoding for foreign characters
+\usepackage[utf8]{inputenc}
+
+\usetheme{Malmoe}
+
+
+% Setup for fullpage use
+% \usepackage{fullpage}
+
+% Uncomment some of the following if you use the features
+%
+% Running Headers and footers
+%\usepackage{fancyhdr}
+
+% Multipart figures
+%\usepackage{subfigure}
+
+% More symbols
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+
+% Surround parts of graphics with box
+\usepackage{boxedminipage}
+
+% Package for including code in the document
+\usepackage{listings}
+
+% If you want to generate a toc for each chapter (use with book)
+% \usepackage{minitoc}
+
+% This is now the recommended way for checking for PDFLaTeX:
+\usepackage{ifpdf}
+
+\newcommand{\e}{\epsilon}
+\newcommand{\s}{\sigma}
+\newcommand{\be}{\beta}
+\newcommand{\g}{\gamma}
+\newcommand{\om}{\omega}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\KAM}{KAM  }
+\newcommand{\rst}{\! \mid}
+
+%\newif\ifpdf
+%\ifx\pdfoutput\undefined
+%\pdffalse % we are not running PDFLaTeX
+%\else
+%\pdfoutput=1 % we are running PDFLaTeX
+%\pdftrue
+%\fi
+
+% \ifpdf
+% \usepackage[pdftex]{graphicx}
+% \else
+% \usepackage{graphicx}
+% \fi
+\title{\KAM Theory}
+\author{ Hidde-Jan Jongsma }
+\institute{ RuG }
+
+\date{\today}
+
+\begin{document}
+
+% \ifpdf
+% \DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+% \else
+% \DeclareGraphicsExtensions{.eps, .jpg}
+% \fi
+
+\maketitle
+
+\section{Introduction}
+
+\begin{frame}{Outline}
+    \small \tableofcontents
+\end{frame}
+
+\subsection{What is KAM Theory}
+
+\begin{frame}{What is KAM Theory?}
+    \begin{itemize}
+        \item Is quasi-periodicity \emph{natural}?
+        \item Solar System is multi-/quasi-periodic?
+        \item Are quasi-periodic subsystems persistent?
+        \item Kolmogorov, Arnold and Moser
+    \end{itemize}
+\end{frame}
+
+\subsection{Multi-/Quasi-periodic subsystems}
+
+\begin{frame}{Multi- and quasi-periodic subsystem}
+    
+    \begin{definition}
+        A system $(M, T, \Phi)$ has a multi-periodic subsystem
+        if $\exists (\mathcal{T}, T, \Phi_\Omega \rst_{\mathcal{T}})$ and a 
+       translation system where
+        \begin{equation*}
+            \Phi_{\Omega}([x],t) = R_{t \Omega}([x]) = [x + t \Omega]
+        \end{equation*}
+        and $f : \T^n \rightarrow M$, $f(\T^n) = \mathcal{T}$ s.t.
+        \begin{equation*}
+            f(\Phi_{\Omega}([x],t)) = \Phi(f([x]), t)
+        \end{equation*}
+    \end{definition}
+    
+    \pause
+
+    What happens when we perturb $\Phi \to \tilde{\Phi}$; $\mathcal{T} \to \tilde{\mathcal{T}}$?
+    
+\end{frame}
+
+\section{KAM Theory of circle maps}
+
+\subsection{Periodically driven and coupled oscillators}
+
+\begin{frame}{Periodically driven and coupled oscillators}
+    
+    Van der Pol oscillator in $C^\infty$-format:
+    \begin{equation*}
+        y'' + cy' + ay + f(y,y') = \epsilon g(y,y',\omega t; \epsilon),
+    \end{equation*}
+    \pause
+    $f$ such that the free system has a \emph{hyperbolic attractor}, $g$ $2\pi$-periodic.
+    
+    \medskip
+    Coupled oscillator:
+    \begin{align*}
+        y_1'' + cy_1' + ay_1 + f_1(y_1,y_1') = & \ \e g_1(y_1,y_1',y_2,y_2') \\
+	y_2'' + cy_2' + ay_2 + f_2(y_2,y_2') = & \ \e g_2(y_1,y_1',y_2,y_2').
+    \end{align*}
+
+    \pause
+    
+    These systems give rise to vectors field $X_\e$.
+    
+    \pause
+    \begin{center}
+        \large
+        Are the dynamics of $X_0 \rst_{T_0}$ persistent?
+    \end{center}
+    
+    
+\end{frame}
+
+% \begin{frame}{Periodically driven oscillator}
+%     $X_0$ has a multi-periodic subsystem $T_0$. 
+%     $X_{0} \! \mid_{T_0}$ conjugated to translational system
+%     \begin{align*}
+%         x_1' & = \om_1 \\
+%         x_2' & = \om_2,
+%     \end{align*}
+%     on $\T^2$ where $x_1 = x, \ \om_1 = \om$.
+%     
+%     \pause
+%     
+%     \medskip
+%     
+%     Since $T_0$ is normally hyperbolic, by the 
+%     Normally Hyperbolic Invariant Manifold Theorem,
+%     $T_0$ is persistent as invariant manifold:
+%     \begin{center}
+%         $X_\e$ \emph{also} has invariant manifold $T_\e$, smoothly dependent on $\e$.
+%     \end{center}
+% \end{frame}
+% 
+% \begin{frame}
+%     \begin{center}
+%         \LARGE
+%         Are the dynamics of $X_0 \rst_{T_0}$ persistent?
+%     \end{center}
+% \end{frame}
+
+\subsection{Poincar\'{e} return maps}
+
+% \begin{frame}{Poincar\'{e} return maps}
+%     We want to find a smooth conjugation between $X_0$ and $X_\e$.
+%     
+%     \medskip
+%     
+%     \textbf{Problem:} Disturbances can turn quasi-periodic orbits in periodic orbits.
+%     
+%     \pause
+%     
+%     \medskip
+%     
+%     \textbf{Solution:} Introduce parameters.
+%     
+%     \begin{equation*}
+%         \mu = (\om_1, \om_2) \pause
+%         \rightarrow \be = \om_2 / \om_1.
+%     \end{equation*}
+%     
+% \end{frame}
+
+\begin{frame}{Poincar\'{e} return maps}
+    We can bring this problem
+    from $\T^2, T=\mathbb{R}$ to $\T^1, T=\mathbb{Z}$ by taking Poincar\'e map
+%     can now study $X_{\be, \e}$ on $\T^2$.
+%     This corresponds to the family of Poincar\'{e} return maps
+    \begin{equation*}
+        P_{\be,\e} : x \to x + 2 \pi \be + \e a(x, \be, \e),
+    \end{equation*}
+    or, equivalently, as a fibre preserving map
+    \begin{equation*}
+        P_{\e} : (x, \be) \to (x + 2 \pi \be + \e a(x, \be, \e), \be).
+    \end{equation*}
+    \pause
+    Since an conjugation between $P_0$ and $P_\e$ means an
+    equivalence between $X_0$ and $X_\e$, we want $\Phi_\e$ s.t.
+    \begin{equation*}
+        P_\e \circ \Phi_\e = \Phi_\e \circ P_0.
+    \end{equation*}
+    
+\end{frame}
+
+\section{Linear small divisor problem}
+
+\subsection{Finding $\Phi_\e$: Fourier series}
+
+\begin{frame}{Finding $\Phi_\e$: Fourier series}
+    We assume $\Phi_\e$ has the form
+    \begin{equation*}
+        \Phi_\e (x,\be) = (x + \e U(x,\be,\e), \be + \e \sigma(\be, \e)).
+    \end{equation*} \pause
+    Since $\Phi_\e$ should conjugate $P_0$ to $P_\e$, we obtain
+    a non-linear equation
+    \begin{align*}
+	    U(x + 2 \pi & \be,\be,\e) - U(x, \be, \e) \\
+            & = 2 \pi \sigma(\be, \e) + a(x + \e U(x, \be, \e), \be + \e \sigma(\be, \e), \e).
+    \end{align*}
+    \pause
+    Very hard to solve, we first linearize to
+    \begin{equation}\label{eq:firstord}
+        U_0(x + 2 \pi \be,\be) - U_0(x, \be)
+        = 2 \pi \sigma_0(\be) + a_0(x, \be),
+    \end{equation}
+    which we solve by Fourier series.
+\end{frame}
+
+\subsection{Diophantine conditions}
+
+\begin{frame}{Diophantine conditions}
+    This yields
+    \begin{equation}\label{eq:formalsol}
+        \begin{split}
+            a_0(x, \be) = & \sum_{k \in \mathbb{Z}} a_{0 k}(\be)e^{ikx},
+            \quad \sigma_0(\be) = \frac{1}{2 \pi} a_{00}(\be) \text{ and} \\
+            & U_0(x, \be) = \sum_{k \in \mathbb{Z}} \frac{a_{0 k}(\be)}{e^{2 \pi ik\be} - 1} e^{ikx}.
+        \end{split}
+    \end{equation}
+    \pause
+    \begin{definition}
+        For $\tau > 1, \g > 0$. $\be \in [0, 1]$ is called $(\tau + 1, \g)$-Diophantine, if
+        $\forall p,q \in \mathbb{Z}, q > 0$
+        \begin{equation*}
+            \left| \be - \frac{p}{q} \right| \ge \frac{\g}{q^{\tau + 1}},
+        \end{equation*}
+    \end{definition}
+\end{frame}
+
+\begin{frame}
+            $[0,1]_{\tau+1, \g} := \{ \be \mid \be (\tau + 1, \g)$-Diophantine$\}$.
+\begin{itemize}
+    \item Union of Cantor set and countable set.
+    \item $\operatorname{measure}([0,1]-[0,1]_{\tau+1, \g}) \le 2 \g \displaystyle \sum_{q \ge 1} q^{-\tau}$
+\end{itemize}
+\pause
+    \begin{theorem}
+        If $\be$ is $(\tau + 1, \g)$-Diophantine, then
+        \begin{equation*}
+            \left| e^{2 \pi i k \be} - 1 \right| \ge \frac{4 \g}{|k|^\tau}.
+        \end{equation*}
+    \end{theorem}
+\end{frame}
+
+\begin{frame}
+    \begin{proof}
+        Suppose $\be$ is $(\tau + 1, \g)$-Diophantine, $k > 0$, now
+        \begin{equation*}
+            |e^{2\pi i k \beta}  - 1| = 2 \sin (\pi k \beta).
+        \end{equation*}
+        For $0 < x < \frac{\pi}{2}$, $\sin(x) \ge \frac{2 x}{\pi}$, so
+        \begin{equation*}
+            |e^{2\pi i k \beta}  - 1| = 2 \sin (\pi k \be) \ge 2 k \be.
+        \end{equation*}
+        Since $\be$ satisfies Diophantine conditions, it follows that
+        \begin{align*}
+            \be \ge \frac{\gamma}{k^{\tau + 1}} \quad \text{ and } \quad
+            |e^{2\pi i k \beta}  - 1| \ge \frac{4 \g}{k^\tau}.
+        \end{align*}
+    \end{proof}
+\end{frame}
+
+\subsection{Linear small divisor problem}
+
+\begin{frame}{1-bite small divisor problem}
+    We generalize \eqref{eq:firstord} to
+    \begin{equation}\label{eq:lin}
+        u(x + 2 \pi \be, \be) - u(x, \be) = f(x,\be),
+    \end{equation}
+    if we take the averages of both sides, it follows
+    that necessarily $f$ is zero on average,
+    bounded by $M$ in a complex neighborhood around $\T^1$.
+\pause
+    \begin{lemma}[Paley-Wiener, scalar case]
+        Let $f = f(x,\om)$ real analytic as above, with Fourier series
+        \begin{equation*}
+            f(x) = \sum_{k \in \mathbb{Z}} f_k(\om)e^{ikx}.
+        \end{equation*}
+        Then, $\forall k \in \mathbb{Z}$, $\om$ in appropiate neighborhood,
+	\begin{equation*}
+	    |f_k(\om)| \le M e^{-\kappa |k|}
+	\end{equation*}
+    \end{lemma}
+\end{frame}
+
+\begin{frame}
+
+\begin{proof}
+    Now $f_k$ is defined as
+    \begin{equation*}
+        f_k(\om) = \frac{1}{2\pi} \oint_{\T^1} f(x,\om)e^{-ikx} dx.
+    \end{equation*}
+    We expand $f$ holomorphically to a small complex strip around $\T^1$ given by
+    \begin{equation*}
+        z = x - i \kappa \operatorname{sign}(k).
+    \end{equation*}
+    \pause
+    We obtain from the Cauchy Theorem
+    \begin{equation*}
+        f_k(\om) = \frac{1}{2\pi} \oint f(z,\om)e^{-ikz} dz
+        = \frac{1}{2\pi} \oint_{\T^1} f(x,\om)e^{-ikx - \kappa|k|} dx.
+    \end{equation*}
+    Hence,
+	\begin{equation*}
+	    |f_k(\om)| \le \frac{e^{- \kappa|k|}}{2\pi} \oint_{\T^1} |f(x,\om)| dx \le M e^{-\kappa |k|}.
+	\end{equation*}
+\end{proof}
+\end{frame}
+
+\subsection{Convergence of the Fourier series}
+
+\begin{frame}{Convergence of the Fourier series}
+    Now we take the Fourier series of $u$
+    \begin{equation*}
+        u(x) = \sum_{k \in \mathbb{Z}} u_k e^{i k x}.
+    \end{equation*}
+    From \eqref{eq:lin} it follows that
+    \begin{equation*}
+        u_k = \frac{f_k}{e^{2\pi i k \be} - 1}.
+    \end{equation*}
+    \pause
+    It follows that
+    \begin{equation*}
+        |u_k| = \frac{|f_k|}{|e^{2\pi i k \be} - 1|} 
+            \le \frac{|k|^\tau M}{4 \g} e^{-\kappa |k|}.
+    \end{equation*}
+\end{frame}
+
+\begin{frame}
+    % Now
+    % \begin{equation*}
+    %     |u_k| = \frac{|f_k|}{|e^{2\pi i k \be} - 1|} 
+    %         \le \frac{|k|^\tau M}{4 \g} e^{-\kappa |k|}.
+    % \end{equation*}
+    Since $|k|^\tau$ polynomial, there exist $M', \kappa' < \kappa$
+    s.t.
+    \begin{equation*}\label{eq:ukbound}
+        |u_k| 
+            \le \frac{|k|^\tau M}{4 \g} e^{-\kappa |k|}
+        \le
+            M' e^{- \kappa' |k|}.
+    \end{equation*}
+    \pause
+    It follows that $\sum_{k \in \mathbb{Z}} u_k e^{ikx}$ converges
+    on a complex strip 
+    \begin{equation*}
+        \T^1 + \kappa' = \{ x \in \mathbb{C}/(2 \pi \mathbb{Z}) \mid |\Im(x)| < \kappa' \}.
+    \end{equation*}
+    \pause
+    On this strip, $u$ is bounded by
+    \begin{equation*}
+        |u(x,\om)| \le \sum_{k \in \mathbb{Z}} | u_k | 
+        \le M' \sum_{k \in \mathbb{Z}}  e^{-\kappa' |k|}
+        = M' \frac{e^{\kappa'} + 1}{e^{\kappa'} - 1},
+    \end{equation*}
+    and, by the Paley-Wiener Lemma, is an analytic function.
+\end{frame}
+
+\begin{frame}{Linear small divisor problem, real-analytic case}
+    \begin{theorem}
+        Considering the 1-bite small divisor problem with real-analytic 
+        $f$ with average $0$. $\forall \be \in [0,1]_{\tau +1, \g}$, $\tau > 1$,
+        the formal solution \eqref{eq:formalsol} converges to
+        a real-analytic solution.
+    \end{theorem}
+    \begin{proof}
+        \begin{equation*}
+            \operatorname{avg}(2 \pi \sigma_0(\be) + a_0(x,\be)) = - a_{00}(\be) + a_{00}(\be) = 0.
+        \end{equation*}
+        The Fourier coefficients of $U_0(x, \be)$ decrease exponentially and so by
+        the Paley-Wiener Lemma, $U_0$ is real-analytic.
+    \end{proof}
+\end{frame}
+
+\section{Newtonian iteration}
+
+\subsection{Back to circle maps}
+
+\begin{frame}{Back to circle maps}
+    We have found a real-analytic solution to
+    \begin{equation*}
+        U_0(x + 2 \pi \be,\be) - U_0(x, \be)
+        = 2 \pi \sigma_0(\be) + a_0(x, \be),
+    \end{equation*}
+    but this does not guarantee that a solution $U(x, \be, \e)$ exists to
+    \begin{align*}
+	    U(x + 2 \pi & \be,\be,\e) - U(x, \be, \e) \\
+            & = 2 \pi \sigma(\be, \e) + a(x + \e U(x, \be, \e), \be + \e \sigma(\be, \e), \e).
+    \end{align*}
+    \pause
+    We can apply a Newtonian iteration process to obtain $U$ and $\Phi_\e$.
+    
+\end{frame}
+
+\subsection{Newtonian iteration}
+\begin{frame}{Newtonian iteration}
+    We can obtain $\Phi_\e$ as the limit of a sequence $\{ \Phi_{\e,i} \}_{k\ge0}$,
+    starting at $\mathrm{Id}$.
+
+\medskip
+\pause
+    At each step, we solve a linear equation of the form
+\begin{equation*}
+    \tilde U (x + 2\pi \be, \be) - \tilde U (x,\be) = 2 \pi \tilde \sigma(\be) + a(x, \be),
+\end{equation*}
+   were we try to reduce `error' $a$. We have seen how we can do this.
+\end{frame}
+
+\begin{frame}
+    For the first iteration, we know there exists a solution $\Phi_{\e,0}$ on
+    a certain complex domain $D_1$
+    \begin{equation*}
+        D_1 = \{ (x,\be) \in \mathbb{C}/(2 \pi \mathbb{Z}) \times [0,1]_{\tau +1, \g} \mid |\Im(x)| < \tilde \kappa \},
+    \end{equation*}
+     which maps $D_1$ back to $D_0$ and from which we obtain $P_{\e,0}$ on $D_1$.
+     
+\medskip
+\pause
+In the next step, we start at $P_{\e,1}$ and obtain $\Psi_1$, now
+\begin{equation*}
+    \Psi_1 : D_2 \rightarrow D_1 \text{ and } \Phi_{\e,1} = \Phi_{\e,0} \circ \Psi_{1}.
+\end{equation*}
+
+\pause
+
+The sequence of real-analytic $\Phi_{\e, i}$'s converges to $\Phi_\e$.
+\end{frame}
+
+
+
+
+% \section{Torus flows}
+% 
+% \subsection{Torus flows}
+% 
+% \begin{frame}{Torus flows}
+%     These are a generalization of circle maps.
+% \end{frame}
+% 
+% \section{Putting it all together}
+% 
+% \subsection{Convergence of Fourier series}
+% 
+% \begin{frame}{Convergence of Fourier series}
+%     \begin{itemize}
+%         \item Paley-Wiener Lemma
+%         \item Diophantine vectors
+%         \item $(\om_1, \om_2)$ Diophantine vector $\rightarrow \be = \om_2/\om_1$ Diophantine number
+%     \end{itemize}
+% \end{frame}
+% 
+\subsection{Circle map theorem}
+
+\begin{frame}{Circle map theorem}
+    \begin{theorem}
+        For $\tau > 1, \g$ suff.\ small, $\e a$ suff.\ small in $C^\infty$ sense,
+        there exists a $C^\infty$ transformation
+        \begin{equation*}
+            \Phi_\e : \T^1 \times [0,1] \rightarrow \T^1 \times [0,1]
+        \end{equation*}
+        that conjugates $P_0 \! \mid_{[0,1]_{\tau + 1, \g}}$ to
+        a quasi-periodic subsystem of $P_\e$.
+    \end{theorem}
+
+\medskip
+\pause
+Quasi-periodic behavior is persistant for Circle maps (under right conditions).
+We have \emph{quasi-periodic stability}.
+\end{frame}
+
+\begin{frame}{Extention to $\T^n$}
+\pause
+\begin{itemize}
+    \item Diophantine vectors
+    \begin{equation*}
+         |\langle \omega, k \rangle | \ge \gamma|k|^{-\tau} \quad [k \in \mathbb{Z}^n]
+    \end{equation*} 
+\vspace{-.5cm}
+\pause
+    \item Torus flows 
+\pause
+    \item Newtonian iteration on vector fields
+\end{itemize}
+
+\end{frame}
+
+
+\bibliographystyle{plain}
+\bibliography{}
+\end{document}
