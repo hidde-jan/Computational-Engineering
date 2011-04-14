@@ -43,7 +43,7 @@
 
 \section{Finite difference method}
 
-In the finite difference method, we discetize the exact solution of
+In the finite difference method, we discretize the exact solution of
 the Helmholtz problem $u(x)$ on a grid $R$ defined on a domain $\Omega
 \subseteq \Reals^d$, $d = 1, 2, 3$. Suppose we have a one dimensional
 problem with $\Omega = (0, 1)$. We want to approximate $u$ in a fixed
@@ -108,12 +108,12 @@ five-point stencil.
 
 The five-point formula can be modified to account for an irregular
 grid. However, this method is often only order $\mathcal{O}(h)$
-accurate, where $h$ is a bound on the stepsize. This method is
+accurate, where $h$ is a bound on the step size. This method is
 commonly used at the boundary of the domain. For small $h$, one can
 shift the boundary points such that the regular five-point method can
 be used. The errors introduced by this transformation have been shown
 to be no greater than those introduced by the use of an irregular
-grid.
+grid \cite{}[BOOK CHAPTER].
 
 \begin{figure}
   \begin{center}

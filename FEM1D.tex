@@ -4,7 +4,7 @@
 \title{Finite Element Method}
 \date{\today}
 
-% Extra symbols and enviroments
+% Extra symbols and environments
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{mathtools}
@@ -55,7 +55,7 @@ approximations is known as the \emph{Galerkin finite element method}.
 Using this method, an approximation to the exact solution is found by
 transforming the problem in a system linear equations.  This results
 in a sparse linear system for which many solving techniques have been
-studied \cite{}. Although the linear systems resulting from this
+studied. Although the linear systems resulting from this
 method are sparse, for an accurate approximation of solution to higher
 dimensional or heavily oscillating problems a very large system can be
 needed.
@@ -73,28 +73,35 @@ needed.
 %cases and we will address the problems that arise when
 %dealing with heavily oscillating functions.
 
-\subsection{One dimensional Helmholtz problem}
+%\subsection{One dimensional Helmholtz problem}
+\subsection{Galerkin finite element method} \label{seq:Galerkin}
 
 As an example, we will consider a simple one dimensional wave problem.
-Suppose we have the following conditions for $u(x)$ on $[0, 1]$:
-\begin{align}
-    - \frac{\dd^2u}{\ \dd x^2} - k^2 u
-      & = f, \quad \text{on}\ \Omega = (0, 1), \\
-    u(0) & = 0, \label{eq:dirbc} \\
-    \frac{\dd u}{\ \dd x}(1) - i k u(1) & = 0. \label{eq:impbc} &
-\end{align}
-It can be shown that the exact solution to is given by
-\begin{equation}
-  u(x) = \frac{e^{ikx}}{k} \int^x_0 \sin(ks)f(s) \ \dd s
-          + \frac{\sin(kx)}{k} \int^1_x e^{iks} f(s) \ \dd s,
-\end{equation}
+Suppose that for $u(x)$ on $[0, 1]$ the conditions in \eqref{helmi} -
+\eqref{eq:impbd} hold. 
+%\begin{align}
+%    - \frac{\dd^2u}{\ \dd x^2} - k^2 u
+%      & = f, \quad \text{on}\ \Omega = (0, 1), \\
+%    u(0) & = 0, \label{eq:dirbc} \\
+%    \frac{\dd u}{\ \dd x}(1) - i k u(1) & = 0. \label{eq:impbc} &
+%\end{align}
+%It can be shown that the exact solution to is given by
+%\begin{equation}
+%  u(x) = \frac{e^{ikx}}{k} \int^x_0 \sin(ks)f(s) \ \dd s
+%          + \frac{\sin(kx)}{k} \int^1_x e^{iks} f(s) \ \dd s,
+%\end{equation}
+The exact solution is given by \eqref{eq:1dexact}
 which is periodic with wavelength $\lambda = \frac{2\pi}{k}$.
-
-While this specific problem has a simple solution, in general, higher
-dimensional problems can only be solved nummericaly. For these complex
-problems, no exact solution is known.
-
-\subsection{Galerkin finite element method} \label{seq:Galerkin}
+%
+%While this specific problem has a simple solution, in general, higher
+%dimensional problems can only be solved numerically. For these complex
+%problems, no exact solution is known.
+%
+%\subsection{Galerkin finite element method} \label{seq:Galerkin}
+Although the exact solution for this problem is known, for higher
+dimensional and more complex problems no exact solution is known. For
+these problems, we want to find an approximation to the exact solution
+using a numerical approach.
 
 Since the original problem is infinite dimensional, we simplify the
 problem by restricting the approximation of the exact solution to a
@@ -120,7 +127,7 @@ obtain
   - \int^1_0 u''(x)v(x) - k^2u(x)v(x) \ \dd x = \int^1_0 f(x)v(x) \ \dd x.
 \end{equation}
 By integrating the first term by parts and substituting boundary
-condition \eqref{eq:impbc} and taking the fact that $v(0) = (0)$ into
+condition \eqref{eq:impbc} and taking the fact that $v(0) = 0$ into
 consideration, we obtain
 \begin{equation} \label{eq:weakprob}
   \int^1_0 u'(x)v'(x)\ \dd x - k^2 \int^1_0 u(x)v(x) \ \dd x - iku(1)v(1) = \int^1_0 f(x)v(x) \ \dd x.
@@ -151,7 +158,7 @@ for $j = 1, 2, \ldots, N - 1$ and for $j = N$ by
     0 & elsewhere.
   \end{dcases*}
 \end{equation}
-Since this set of function spans $S_h(0,1)$, they are known als
+Since this set of function spans $S_h(0,1)$, they are known as
 \emph{basis functions}. The intervals $\tau_i = (x_{i - 1}, x_i)$ are
 called \emph{finite elements}. In our case, every $\tau_i$ has length
 $h$, hence $X_h$ is called a \emph{uniform} mesh. Now, if we require
@@ -251,23 +258,23 @@ and
             \end{pmatrix}.
 \end{equation*}
 
-We see that the system matrix $(A - k^2 B - i k C)$ is sparce, its
+We see that the system matrix $(A - k^2 B - i k C)$ is sparse, its
 entries are mostly zero. Furthermore, it is also \emph{tridiagonal},
-which means only its main, lower and upperdiagonal are non-zero. For
+which means only its main, lower and upper diagonal are non-zero. For
 this type of systems, very efficient solvers are available (see
-[OSCAR's stuk]). After solving the above system, we plug the values
+Section \ref{seq:numfem}). After solving the above system, we plug the values
 $u_i$ back into \eqref{eq:Usum} and obtain our estimate $U(x)$ to
 $u(x)$.
 
 \subsection{Error estimates}
 
-For small $h$, the Galerkin finite element method as an error estimate
+For small $h$, the Galerkin finite element method has an error estimate
 of the form
 \begin{equation} \label{eq:ErrEst}
   \frac{\lVert u - U \rVert}{\lVert u \rVert} \leq C h^2,
 \end{equation}
-where the constant $C$ is independent of $h$ \cite{}[CITE fem-paper].
-Although we see that the error goes to zero as $h$ decreaces (i.e. $N$
+where the constant $C$ is independent of $h$ \cite[p.\ 10]{femnotes}.
+Although we see that the error goes to zero as $h$ decreases (i.e. $N$
 increases), it is unclear what $h$ is required for a certain level of
 accuracy. Furthermore, th $C$ in \eqref{eq:ErrEst} can depend multiple
 factors. For instance, it could depend on the forcing term $f$, the
@@ -276,24 +283,24 @@ problematic in multiple ways.
 
 A higher wavenumber means higher oscillatory behavior of the exact
 solution. Since the wavelength $\lambda$ is defined as
-$\frac{2\pi}{k}$, the wavelength decreases as $k$ incleases. To keep
-the number of gridpoints per wavelength constant and the approximation
-of $u$ accurate, the stepsize $h$ has to decrease as $k$. A common
-idea is to keep the number of gridpoints per wavelength constant, but
+$\frac{2\pi}{k}$, the wavelength decreases as $k$ increases. To keep
+the number of grid points per wavelength constant and the approximation
+of $u$ accurate, the step size $h$ has to decrease as $k$. A common
+idea is to keep the number of grid points per wavelength constant, but
 this leads to bigger systems that have to be solved and a great deal
 of additional computation costs.
 
-Another problem that accompanies higher wavenumbers is the
+Another problem that accompanies higher wave numbers is the
 introduction of pollution errors into the estimate $U$. Errors caused
-by the wavelength not being modelled accurately accumilate and reduce
-the accuracy of our estimation. It was proven [CITE] that the relative
-error satisfies
+by the wavelength not being modelled accurately accumulate and reduce
+the accuracy of our estimation. It was proven \cite{femnotes} that the
+relative error satisfies
 \begin{equation} \label{eq:ErrEstK}
   \frac{\lVert u - U \rVert}{\lVert u \rVert} \leq C_1 k h + C_2 k^3
   h^2,
 \end{equation}
 where constants $C_1$, $C_2$ are independent of both $k$ and $h$. We
 see that, to keep this bound constant, we have to fix $k^3 h^2$. As a
-result, our linear system rappidly increases in size as $k$ increases.
+result, our linear system rapidly increases in size as $k$ increases.
 
 \end{document}

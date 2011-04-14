@@ -160,7 +160,7 @@ and we increase the number of dimensions, the size of the linear
 system can grow rapidly.
 
 Suppose we want to achieve an accuracy of $0.01$ (i.e.\ 1\%) and our
-error $\tau$ is bounded by $h^2$, with $h = 1/N$ defined as our stepsize in
+error $\tau$ is bounded by $h^2$, with $h = 1/N$ defined as our step size in
 each dimension. In the one dimensional case, we would have a total of
 10 elements. Matrix $A$ would be of size $10 \times 10$. In two
 dimensions, the resulting system would have 100 elements and $A$ would
@@ -169,7 +169,7 @@ have size $100 \times 100$. In three dimensions, we would need a $1000
 elements increases extremely fast when the number of dimensions in our
 problem grow.
 
-In real applications, the stepsize needed to achieve an accuracy of
+In real applications, the step size needed to achieve an accuracy of
 $0.01$ could turn out to be many times smaller than in our example
 above. In these situations, the resulting linear system could grow
 beyond the size at which solving and storing the linear systems with
@@ -178,11 +178,11 @@ not able to use direct methods to solve the system. Instead, we have
 to use iterative methods.
 
 The efficiency of these iterative methods depends for a great deal on
-the \emph{bandwith} of the matrix $A$. In the one dimensional case, we
-saw that the bandwith is 3. Although by a suitable choice of basis
+the \emph{bandwidth} of the matrix $A$. In the one dimensional case, we
+saw that the bandwidth is 3. Although by a suitable choice of basis
 functions $\chi_m$ the matrix $A$ can remain sparse in higher
 dimensions, the bandwidth typically increases with the number of
-dimensions. For a two dimensional problem, the bandwith would be of
+dimensions. For a two dimensional problem, the bandwidth would be of
 order $N$. For three dimensions, the furthest non-zero element would
 be at a distance of order $N^2$ from the diagonal. Again, this adds to
 the cost of solving large systems using a finite element approach.
@@ -205,13 +205,13 @@ of `problematic' elements they produce.
 
 \section{Unbounded domains}
 
-The finite elemeht method is a good fit for bounded domains, but to
+The finite element method is a good fit for bounded domains, but to
 extend its application to unbounded domains, we have to put in some
-extra contraints. The way this is done, is by adding an
+extra constraints. The way this is done, is by adding an
 additional boundary condition to model the behavior of waves at
 infinity. This condition is called the \emph{Sommerfeld radiation
 condition}. It ensures that no waves are reflected from $\infty$. We
-add the following containstraint to \eqref{eq:Duku};
+add the following constraints to \eqref{eq:Duku};
 \begin{equation}
   \frac{1}{R^{(d - 1)/2}}
   \left( \frac{\partial u}{\partial R} - i k u \right)
@@ -219,12 +219,12 @@ add the following containstraint to \eqref{eq:Duku};
   \text{as}\ R \rightarrow \infty, \quad \Omega = \Reals^d,\ d = 1, 2, 3.
 \end{equation}
 Solutions to Helmholtz problems on infinite domains that satisfy this
-contstrains are also called \emph{radiating} solutions.
+constraint are also called \emph{radiating} solutions.
 
 However, this condition alone does not solve the problem that we have
 to discretize an unbounded domain. Since computers only have a finite
-amount of memory, we need to find a way to discritize an infinite
-amound of space into a finite set of elements. A common approach is to
+amount of memory, we need to find a way to discretize an infinite
+amount of space into a finite set of elements. A common approach is to
 add an artificial boundary to the domain, replacing the unbounded
 domain with a bounded one. In order for the solution to the bounded
 problem to be sufficiently close to the solution for the unbounded
@@ -251,16 +251,16 @@ $\infty$ to $0$. Applying the boundary condition
   + \frac{\partial P}{\partial t}(x_0) = 0
 \end{equation*}
 at a point $x_0 \in \Omega$ eliminates the incoming wave. This is
-called a \emph{nonreflecting boundary condition} at $x_0$.
+called a \emph{non-reflecting boundary condition} at $x_0$.
 
 In higher dimensions, construction such a NRBC can be difficult,
 because the direction in which waves travel in the exact solution have
 to be known. In this case a ABC can be used to approximate the NRBC.
-Other methods for solving the Helholtz problem on an unbouded domain
-are the \emph{Perfectly Matched Layers} and the aptly named
-\emph{infinite elements} method [CITE].
+Other methods for solving the Helholtz problem on an unbounded domain
+are the \emph{Perfectly Matched Layers} and the
+\emph{infinite element} method \cite[p.\ 20]{femnotes}.
 
-\section{Large wavenumbers and error estimates}
+\section{Large wave numbers and error estimates}
 
 For higher dimensional problems, a large wavelength $k$ can cause
 additional problems that can lead to a less accurate approximation to
@@ -285,9 +285,9 @@ Another way to reduce the pollution error is by using specific basic
 functions that provide a good fit for high frequency scattering
 problems. Two methods that use this approach are the \emph{generalized
 finite element methods} and the \emph{partition of unity method}
-[CITE]. One last problem that occurs when $k$ becomes large is the
+\cite[p.\ 21]{femnotes}. One last problem that occurs when $k$ becomes large is the
 highly oscillatory behavior of the integrals in \eqref{eq:2Dweak}.
-The numerical approximations of these integrals becomes more expencive
+The numerical approximations of these integrals becomes more expensive
 as $k$ increases, which increases the pollution error.
 
 \end{document}

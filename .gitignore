@@ -44,3 +44,4 @@
 *.out
 *.synctex.gz
 .latex_tmp
+*~
