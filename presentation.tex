@@ -28,6 +28,8 @@
 \usepackage{amssymb}
 \usepackage{latexsym}
 
+\usepackage{mathtools}
+
 % Surround parts of graphics with box
 \usepackage{boxedminipage}
 
@@ -38,16 +40,43 @@
 % \usepackage{minitoc}
 
 % This is now the recommended way for checking for PDFLaTeX:
-\usepackage{ifpdf}
+%\usepackage{ifpdf}
+%
+%\newcommand{\e}{\epsilon}
+%\newcommand{\s}{\sigma}
+%\newcommand{\be}{\beta}
+%\newcommand{\g}{\gamma}
+%\newcommand{\om}{\omega}
+%\newcommand{\T}{\mathbb{T}}
+%\newcommand{\KAM}{KAM  }
+%\newcommand{\rst}{\! \mid}
 
-\newcommand{\e}{\epsilon}
-\newcommand{\s}{\sigma}
-\newcommand{\be}{\beta}
-\newcommand{\g}{\gamma}
-\newcommand{\om}{\omega}
-\newcommand{\T}{\mathbb{T}}
-\newcommand{\KAM}{KAM  }
-\newcommand{\rst}{\! \mid}
+% Create graphics in LaTex
+\usepackage{tikz}
+
+% Extra commands
+\newcommand{\Reals}{\mathbb{R}}
+
+\newcommand{\dd}{\mathrm{d}}
+
+\newcommand{\dun}{\frac{\partial u}{\partial n}}
+\newcommand{\dux}{\frac{\partial u}{\partial x}}
+\newcommand{\duxx}{\frac{\partial^2 u}{\partial x^2}}
+\newcommand{\duxxx}{\frac{\partial^3 u}{\partial x^3}}
+
+\newcommand{\duy}{\frac{\partial u}{\partial y}}
+\newcommand{\duyy}{\frac{\partial^2 u}{\partial y^2}}
+\newcommand{\duyyy}{\frac{\partial^3 u}{\partial y^3}}
+\newcommand{\lapu}{\nabla^2 u}
+
+\newcommand{\vct}{}
+
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+
+\newcommand{\LO}{\ensuremath{L_2(\Omega)}}
+\newcommand{\HO}{\ensuremath{H^1(\Omega)}}
+\newcommand{\HOzero}{\ensuremath{H^1_{(0}(\Omega)}}
 
 %\newif\ifpdf
 %\ifx\pdfoutput\undefined
@@ -62,7 +91,7 @@
 % \else
 % \usepackage{graphicx}
 % \fi
-\title{\KAM Theory}
+\title{Finite Difference and Finite Element Methods \\ for Helmholtz scattering problems}
 \author{ Hidde-Jan Jongsma }
 \institute{ RuG }
 
@@ -84,447 +113,312 @@
     \small \tableofcontents
 \end{frame}
 
-\subsection{What is KAM Theory}
+\subsection{What is FDM/FEM?}
 
-\begin{frame}{What is KAM Theory?}
+\begin{frame}{What is FDM/FEM?}
+  Frequently used for acoustic electromagnetic scattering problems.
+
+  Approach:
     \begin{itemize}
-        \item Is quasi-periodicity \emph{natural}?
-        \item Solar System is multi-/quasi-periodic?
-        \item Are quasi-periodic subsystems persistent?
-        \item Kolmogorov, Arnold and Moser
+        \item Discretize domain $\Omega$.
+        \item Create new constraints that mimic `real' ones.
+        \item Find solution to these constrains that \emph{approximate} the exact solution.
     \end{itemize}
+  
+  Unbounded domains or complex geometries $\rightarrow$ use FEM.
 \end{frame}
 
-\subsection{Multi-/Quasi-periodic subsystems}
-
-\begin{frame}{Multi- and quasi-periodic subsystem}
-    
+\begin{frame}{Helmholtz equations}
     \begin{definition}
-        A system $(M, T, \Phi)$ has a multi-periodic subsystem
-        if $\exists (\mathcal{T}, T, \Phi_\Omega \rst_{\mathcal{T}})$ and a 
-       translation system where
-        \begin{equation*}
-            \Phi_{\Omega}([x],t) = R_{t \Omega}([x]) = [x + t \Omega]
-        \end{equation*}
-        and $f : \T^n \rightarrow M$, $f(\T^n) = \mathcal{T}$ s.t.
-        \begin{equation*}
-            f(\Phi_{\Omega}([x],t)) = \Phi(f([x]), t)
-        \end{equation*}
+      The Helmholtz equations are given by
+\begin{align}
+  \Delta u + k^2 u & = 0, \quad \text{in}\ \Omega, \label{eq:Duku} \\
+  \frac{\partial u}{\partial n} + \beta u & = g, \quad \text{on}\ \Gamma, \label{eq:2Dbc}
+\end{align}
+      for $u : \Omega \rightarrow \Reals$.
     \end{definition}
     
-    \pause
+\end{frame}
 
-    What happens when we perturb $\Phi \to \tilde{\Phi}$; $\mathcal{T} \to \tilde{\mathcal{T}}$?
+\section{Finite difference method}
+
+\subsection{Finite difference method}
+
+\begin{frame}{Finite difference method}
     
-\end{frame}
+  \begin{itemize}
+    \item Grid on domain $\Omega \subseteq \Reals^d, d = 1, 2, 3$.
+    \item Approximate $\nabla^2 u$ by finite difference.
+  \end{itemize}
 
-\section{KAM Theory of circle maps}
-
-\subsection{Periodically driven and coupled oscillators}
-
-\begin{frame}{Periodically driven and coupled oscillators}
+  \begin{equation*}
+    \nabla^2 u + f u = g, \text{ on } \Omega.
+  \end{equation*}
     
-    Van der Pol oscillator in $C^\infty$-format:
-    \begin{equation*}
-        y'' + cy' + ay + f(y,y') = \epsilon g(y,y',\omega t; \epsilon),
-    \end{equation*}
-    \pause
-    $f$ such that the free system has a \emph{hyperbolic attractor}, $g$ $2\pi$-periodic.
-    
-    \medskip
-    Coupled oscillator:
-    \begin{align*}
-        y_1'' + cy_1' + ay_1 + f_1(y_1,y_1') = & \ \e g_1(y_1,y_1',y_2,y_2') \\
-	y_2'' + cy_2' + ay_2 + f_2(y_2,y_2') = & \ \e g_2(y_1,y_1',y_2,y_2').
-    \end{align*}
-
-    \pause
-    
-    These systems give rise to vectors field $X_\e$.
-    
-    \pause
-    \begin{center}
-        \large
-        Are the dynamics of $X_0 \rst_{T_0}$ persistent?
-    \end{center}
-    
-    
-\end{frame}
-
-% \begin{frame}{Periodically driven oscillator}
-%     $X_0$ has a multi-periodic subsystem $T_0$. 
-%     $X_{0} \! \mid_{T_0}$ conjugated to translational system
-%     \begin{align*}
-%         x_1' & = \om_1 \\
-%         x_2' & = \om_2,
-%     \end{align*}
-%     on $\T^2$ where $x_1 = x, \ \om_1 = \om$.
-%     
-%     \pause
-%     
-%     \medskip
-%     
-%     Since $T_0$ is normally hyperbolic, by the 
-%     Normally Hyperbolic Invariant Manifold Theorem,
-%     $T_0$ is persistent as invariant manifold:
-%     \begin{center}
-%         $X_\e$ \emph{also} has invariant manifold $T_\e$, smoothly dependent on $\e$.
-%     \end{center}
-% \end{frame}
-% 
-% \begin{frame}
-%     \begin{center}
-%         \LARGE
-%         Are the dynamics of $X_0 \rst_{T_0}$ persistent?
-%     \end{center}
-% \end{frame}
-
-\subsection{Poincar\'{e} return maps}
-
-% \begin{frame}{Poincar\'{e} return maps}
-%     We want to find a smooth conjugation between $X_0$ and $X_\e$.
-%     
-%     \medskip
-%     
-%     \textbf{Problem:} Disturbances can turn quasi-periodic orbits in periodic orbits.
-%     
-%     \pause
-%     
-%     \medskip
-%     
-%     \textbf{Solution:} Introduce parameters.
-%     
-%     \begin{equation*}
-%         \mu = (\om_1, \om_2) \pause
-%         \rightarrow \be = \om_2 / \om_1.
-%     \end{equation*}
-%     
-% \end{frame}
-
-\begin{frame}{Poincar\'{e} return maps}
-    We can bring this problem
-    from $\T^2, T=\mathbb{R}$ to $\T^1, T=\mathbb{Z}$ by taking Poincar\'e map
-%     can now study $X_{\be, \e}$ on $\T^2$.
-%     This corresponds to the family of Poincar\'{e} return maps
-    \begin{equation*}
-        P_{\be,\e} : x \to x + 2 \pi \be + \e a(x, \be, \e),
-    \end{equation*}
-    or, equivalently, as a fibre preserving map
-    \begin{equation*}
-        P_{\e} : (x, \be) \to (x + 2 \pi \be + \e a(x, \be, \e), \be).
-    \end{equation*}
-    \pause
-    Since an conjugation between $P_0$ and $P_\e$ means an
-    equivalence between $X_0$ and $X_\e$, we want $\Phi_\e$ s.t.
-    \begin{equation*}
-        P_\e \circ \Phi_\e = \Phi_\e \circ P_0.
-    \end{equation*}
-    
-\end{frame}
-
-\section{Linear small divisor problem}
-
-\subsection{Finding $\Phi_\e$: Fourier series}
-
-\begin{frame}{Finding $\Phi_\e$: Fourier series}
-    We assume $\Phi_\e$ has the form
-    \begin{equation*}
-        \Phi_\e (x,\be) = (x + \e U(x,\be,\e), \be + \e \sigma(\be, \e)).
-    \end{equation*} \pause
-    Since $\Phi_\e$ should conjugate $P_0$ to $P_\e$, we obtain
-    a non-linear equation
-    \begin{align*}
-	    U(x + 2 \pi & \be,\be,\e) - U(x, \be, \e) \\
-            & = 2 \pi \sigma(\be, \e) + a(x + \e U(x, \be, \e), \be + \e \sigma(\be, \e), \e).
-    \end{align*}
-    \pause
-    Very hard to solve, we first linearize to
-    \begin{equation}\label{eq:firstord}
-        U_0(x + 2 \pi \be,\be) - U_0(x, \be)
-        = 2 \pi \sigma_0(\be) + a_0(x, \be),
-    \end{equation}
-    which we solve by Fourier series.
-\end{frame}
-
-\subsection{Diophantine conditions}
-
-\begin{frame}{Diophantine conditions}
-    This yields
-    \begin{equation}\label{eq:formalsol}
-        \begin{split}
-            a_0(x, \be) = & \sum_{k \in \mathbb{Z}} a_{0 k}(\be)e^{ikx},
-            \quad \sigma_0(\be) = \frac{1}{2 \pi} a_{00}(\be) \text{ and} \\
-            & U_0(x, \be) = \sum_{k \in \mathbb{Z}} \frac{a_{0 k}(\be)}{e^{2 \pi ik\be} - 1} e^{ikx}.
-        \end{split}
-    \end{equation}
-    \pause
-    \begin{definition}
-        For $\tau > 1, \g > 0$. $\be \in [0, 1]$ is called $(\tau + 1, \g)$-Diophantine, if
-        $\forall p,q \in \mathbb{Z}, q > 0$
-        \begin{equation*}
-            \left| \be - \frac{p}{q} \right| \ge \frac{\g}{q^{\tau + 1}},
-        \end{equation*}
-    \end{definition}
-\end{frame}
-
-\begin{frame}
-            $[0,1]_{\tau+1, \g} := \{ \be \mid \be (\tau + 1, \g)$-Diophantine$\}$.
-\begin{itemize}
-    \item Union of Cantor set and countable set.
-    \item $\operatorname{measure}([0,1]-[0,1]_{\tau+1, \g}) \le 2 \g \displaystyle \sum_{q \ge 1} q^{-\tau}$
-\end{itemize}
-\pause
-    \begin{theorem}
-        If $\be$ is $(\tau + 1, \g)$-Diophantine, then
-        \begin{equation*}
-            \left| e^{2 \pi i k \be} - 1 \right| \ge \frac{4 \g}{|k|^\tau}.
-        \end{equation*}
-    \end{theorem}
-\end{frame}
-
-\begin{frame}
-    \begin{proof}
-        Suppose $\be$ is $(\tau + 1, \g)$-Diophantine, $k > 0$, now
-        \begin{equation*}
-            |e^{2\pi i k \beta}  - 1| = 2 \sin (\pi k \beta).
-        \end{equation*}
-        For $0 < x < \frac{\pi}{2}$, $\sin(x) \ge \frac{2 x}{\pi}$, so
-        \begin{equation*}
-            |e^{2\pi i k \beta}  - 1| = 2 \sin (\pi k \be) \ge 2 k \be.
-        \end{equation*}
-        Since $\be$ satisfies Diophantine conditions, it follows that
-        \begin{align*}
-            \be \ge \frac{\gamma}{k^{\tau + 1}} \quad \text{ and } \quad
-            |e^{2\pi i k \beta}  - 1| \ge \frac{4 \g}{k^\tau}.
-        \end{align*}
-    \end{proof}
-\end{frame}
-
-\subsection{Linear small divisor problem}
-
-\begin{frame}{1-bite small divisor problem}
-    We generalize \eqref{eq:firstord} to
-    \begin{equation}\label{eq:lin}
-        u(x + 2 \pi \be, \be) - u(x, \be) = f(x,\be),
-    \end{equation}
-    if we take the averages of both sides, it follows
-    that necessarily $f$ is zero on average,
-    bounded by $M$ in a complex neighborhood around $\T^1$.
-\pause
-    \begin{lemma}[Paley-Wiener, scalar case]
-        Let $f = f(x,\om)$ real analytic as above, with Fourier series
-        \begin{equation*}
-            f(x) = \sum_{k \in \mathbb{Z}} f_k(\om)e^{ikx}.
-        \end{equation*}
-        Then, $\forall k \in \mathbb{Z}$, $\om$ in appropiate neighborhood,
-	\begin{equation*}
-	    |f_k(\om)| \le M e^{-\kappa |k|}
-	\end{equation*}
-    \end{lemma}
-\end{frame}
-
-\begin{frame}
-
-\begin{proof}
-    Now $f_k$ is defined as
-    \begin{equation*}
-        f_k(\om) = \frac{1}{2\pi} \oint_{\T^1} f(x,\om)e^{-ikx} dx.
-    \end{equation*}
-    We expand $f$ holomorphically to a small complex strip around $\T^1$ given by
-    \begin{equation*}
-        z = x - i \kappa \operatorname{sign}(k).
-    \end{equation*}
-    \pause
-    We obtain from the Cauchy Theorem
-    \begin{equation*}
-        f_k(\om) = \frac{1}{2\pi} \oint f(z,\om)e^{-ikz} dz
-        = \frac{1}{2\pi} \oint_{\T^1} f(x,\om)e^{-ikx - \kappa|k|} dx.
-    \end{equation*}
-    Hence,
-	\begin{equation*}
-	    |f_k(\om)| \le \frac{e^{- \kappa|k|}}{2\pi} \oint_{\T^1} |f(x,\om)| dx \le M e^{-\kappa |k|}.
-	\end{equation*}
-\end{proof}
-\end{frame}
-
-\subsection{Convergence of the Fourier series}
-
-\begin{frame}{Convergence of the Fourier series}
-    Now we take the Fourier series of $u$
-    \begin{equation*}
-        u(x) = \sum_{k \in \mathbb{Z}} u_k e^{i k x}.
-    \end{equation*}
-    From \eqref{eq:lin} it follows that
-    \begin{equation*}
-        u_k = \frac{f_k}{e^{2\pi i k \be} - 1}.
-    \end{equation*}
-    \pause
-    It follows that
-    \begin{equation*}
-        |u_k| = \frac{|f_k|}{|e^{2\pi i k \be} - 1|} 
-            \le \frac{|k|^\tau M}{4 \g} e^{-\kappa |k|}.
-    \end{equation*}
-\end{frame}
-
-\begin{frame}
-    % Now
-    % \begin{equation*}
-    %     |u_k| = \frac{|f_k|}{|e^{2\pi i k \be} - 1|} 
-    %         \le \frac{|k|^\tau M}{4 \g} e^{-\kappa |k|}.
-    % \end{equation*}
-    Since $|k|^\tau$ polynomial, there exist $M', \kappa' < \kappa$
-    s.t.
-    \begin{equation*}\label{eq:ukbound}
-        |u_k| 
-            \le \frac{|k|^\tau M}{4 \g} e^{-\kappa |k|}
-        \le
-            M' e^{- \kappa' |k|}.
-    \end{equation*}
-    \pause
-    It follows that $\sum_{k \in \mathbb{Z}} u_k e^{ikx}$ converges
-    on a complex strip 
-    \begin{equation*}
-        \T^1 + \kappa' = \{ x \in \mathbb{C}/(2 \pi \mathbb{Z}) \mid |\Im(x)| < \kappa' \}.
-    \end{equation*}
-    \pause
-    On this strip, $u$ is bounded by
-    \begin{equation*}
-        |u(x,\om)| \le \sum_{k \in \mathbb{Z}} | u_k | 
-        \le M' \sum_{k \in \mathbb{Z}}  e^{-\kappa' |k|}
-        = M' \frac{e^{\kappa'} + 1}{e^{\kappa'} - 1},
-    \end{equation*}
-    and, by the Paley-Wiener Lemma, is an analytic function.
-\end{frame}
-
-\begin{frame}{Linear small divisor problem, real-analytic case}
-    \begin{theorem}
-        Considering the 1-bite small divisor problem with real-analytic 
-        $f$ with average $0$. $\forall \be \in [0,1]_{\tau +1, \g}$, $\tau > 1$,
-        the formal solution \eqref{eq:formalsol} converges to
-        a real-analytic solution.
-    \end{theorem}
-    \begin{proof}
-        \begin{equation*}
-            \operatorname{avg}(2 \pi \sigma_0(\be) + a_0(x,\be)) = - a_{00}(\be) + a_{00}(\be) = 0.
-        \end{equation*}
-        The Fourier coefficients of $U_0(x, \be)$ decrease exponentially and so by
-        the Paley-Wiener Lemma, $U_0$ is real-analytic.
-    \end{proof}
-\end{frame}
-
-\section{Newtonian iteration}
-
-\subsection{Back to circle maps}
-
-\begin{frame}{Back to circle maps}
-    We have found a real-analytic solution to
-    \begin{equation*}
-        U_0(x + 2 \pi \be,\be) - U_0(x, \be)
-        = 2 \pi \sigma_0(\be) + a_0(x, \be),
-    \end{equation*}
-    but this does not guarantee that a solution $U(x, \be, \e)$ exists to
-    \begin{align*}
-	    U(x + 2 \pi & \be,\be,\e) - U(x, \be, \e) \\
-            & = 2 \pi \sigma(\be, \e) + a(x + \e U(x, \be, \e), \be + \e \sigma(\be, \e), \e).
-    \end{align*}
-    \pause
-    We can apply a Newtonian iteration process to obtain $U$ and $\Phi_\e$.
-    
-\end{frame}
-
-\subsection{Newtonian iteration}
-\begin{frame}{Newtonian iteration}
-    We can obtain $\Phi_\e$ as the limit of a sequence $\{ \Phi_{\e,i} \}_{k\ge0}$,
-    starting at $\mathrm{Id}$.
-
-\medskip
-\pause
-    At each step, we solve a linear equation of the form
+  Grid on 1D $\Omega = (0, 1)$:
 \begin{equation*}
-    \tilde U (x + 2\pi \be, \be) - \tilde U (x,\be) = 2 \pi \tilde \sigma(\be) + a(x, \be),
-\end{equation*}
-   were we try to reduce `error' $a$. We have seen how we can do this.
-\end{frame}
-
-\begin{frame}
-    For the first iteration, we know there exists a solution $\Phi_{\e,0}$ on
-    a certain complex domain $D_1$
-    \begin{equation*}
-        D_1 = \{ (x,\be) \in \mathbb{C}/(2 \pi \mathbb{Z}) \times [0,1]_{\tau +1, \g} \mid |\Im(x)| < \tilde \kappa \},
-    \end{equation*}
-     which maps $D_1$ back to $D_0$ and from which we obtain $P_{\e,0}$ on $D_1$.
-     
-\medskip
-\pause
-In the next step, we start at $P_{\e,1}$ and obtain $\Psi_1$, now
-\begin{equation*}
-    \Psi_1 : D_2 \rightarrow D_1 \text{ and } \Phi_{\e,1} = \Phi_{\e,0} \circ \Psi_{1}.
+  X_h = \left\{ x_i\ |\ x_i = h i,\ i = 0, 1, \ldots, N \right\}
 \end{equation*}
 
-\pause
-
-The sequence of real-analytic $\Phi_{\e, i}$'s converges to $\Phi_\e$.
 \end{frame}
 
+\subsection{Finite difference}
 
+\begin{frame}{Finite difference}
 
+We define $u_i = u(x_i)$. Use Taylor series to approximate $\dd^2 u / \dd x^2$:
+\begin{align}
+  u_{i + 1} & = u_{i} + h \frac{\dd u}{\dd x}
+    + \frac{h^2}{2} \frac{\dd^2 u}{\dd x^2}
+    + \frac{h^3}{6} \frac{\dd^3 u}{\dd x^3}
+    + \frac{h^4}{24} \frac{\dd^4 u}{\dd x^4} 
+    + \mathcal{O}(h^5) \\
+%
+  u_{i - 1} & = u_{i} - h \frac{\dd u}{\dd x}
+    + \frac{h^2}{2} \frac{\dd^2 u}{\dd x^2}
+    - \frac{h^3}{6} \frac{\dd^3 u}{\dd x^3}
+    + \frac{h^4}{24} \frac{\dd^4 u}{\dd x^4}
+    + \mathcal{O}(h^5).
+\end{align}
+This results in
+\begin{equation}
+  \frac{\dd^2 u}{\dd x^2}(x_i)
+  \approx
+    \frac{1}{h^2} \left[ u_{i + 1} - 2 u_i + u_{i - 1} \right],
+\end{equation}
+which has a truncation error of the form $ - \frac{h^2}{12} \frac{\dd^4 u}{\dd x^4}(x_i)$.
 
-% \section{Torus flows}
-% 
-% \subsection{Torus flows}
-% 
-% \begin{frame}{Torus flows}
-%     These are a generalization of circle maps.
-% \end{frame}
-% 
-% \section{Putting it all together}
-% 
-% \subsection{Convergence of Fourier series}
-% 
-% \begin{frame}{Convergence of Fourier series}
-%     \begin{itemize}
-%         \item Paley-Wiener Lemma
-%         \item Diophantine vectors
-%         \item $(\om_1, \om_2)$ Diophantine vector $\rightarrow \be = \om_2/\om_1$ Diophantine number
-%     \end{itemize}
-% \end{frame}
-% 
-\subsection{Circle map theorem}
-
-\begin{frame}{Circle map theorem}
-    \begin{theorem}
-        For $\tau > 1, \g$ suff.\ small, $\e a$ suff.\ small in $C^\infty$ sense,
-        there exists a $C^\infty$ transformation
-        \begin{equation*}
-            \Phi_\e : \T^1 \times [0,1] \rightarrow \T^1 \times [0,1]
-        \end{equation*}
-        that conjugates $P_0 \! \mid_{[0,1]_{\tau + 1, \g}}$ to
-        a quasi-periodic subsystem of $P_\e$.
-    \end{theorem}
-
-\medskip
-\pause
-Quasi-periodic behavior is persistant for Circle maps (under right conditions).
-We have \emph{quasi-periodic stability}.
 \end{frame}
 
-\begin{frame}{Extention to $\T^n$}
-\pause
+\subsection{Five-point formula}
+
+\begin{frame}{Five-point formula}
+
+\begin{columns}[c]
+\column{.5\textwidth}
+
+For two dimensions, the commonly used form is the
+\emph{five-point formula}.
+\begin{align*}
+  \nabla^2 u(x, y) & \approx \\ &  \frac{1}{h^2} ( 
+      u(x + h, y) + u(x - h, y) \\ & + u(x, y + h)
+      + u(x, y - h) \\ & - 4 u(x, y) ).
+\end{align*}
+
+\column{.5\textwidth}
+\begin{figure}
+    \begin{tikzpicture}
+    \tikzstyle{every node}=[draw,circle,fill=black,minimum size=4pt,
+                            inner sep=0pt]
+
+      \draw (0,0) node (0) [label=left:${(x - h, y)}$] {}
+        -- ++(0:1.0cm) node (1) [label=-5:${(x, y)}$] {}
+        -- ++(90:1.0cm) node (2) [label=right:${(x, y + h)}$] {} 
+        ++(-90:2.0cm) node (3) [label=right:${(x, y - h)}$] {}
+        ++(45:1.414213cm) node (4) [label=right:${(x + h, y)}$] {};
+
+      \draw (1) -- (3);
+      \draw (1) -- (4);
+    \end{tikzpicture}
+    \caption{Five-point stencil}
+\end{figure}
+\end{columns}
+
+\end{frame}
+
+\section{Finite element method}
+\subsection{Finite element method}
+
+\begin{frame}{Finite element method}
+
 \begin{itemize}
-    \item Diophantine vectors
-    \begin{equation*}
-         |\langle \omega, k \rangle | \ge \gamma|k|^{-\tau} \quad [k \in \mathbb{Z}^n]
-    \end{equation*} 
-\vspace{-.5cm}
-\pause
-    \item Torus flows 
-\pause
-    \item Newtonian iteration on vector fields
+  \item Approximate solution to weak form of problem.
+  \item Uses search space of functions defined on set of \emph{finite elements}.
 \end{itemize}
 
+\begin{definition}
+  $f \in \LO$:
+  \begin{equation*}
+  \lVert f \rVert := \left(
+    \int_\Omega | f(x) |^2 \ \dd\Omega \right)^{\frac{1}{2}} < \infty.
+  \end{equation*}
+  $f \in \HO$:
+\begin{equation*}
+  \lVert \nabla f \rVert^2 + \lVert f \rVert^2 < \infty.
+\end{equation*}
+  $f \in \HOzero$ if $f \in \HO$ and $f(0) = 0$.
+\end{definition}
 \end{frame}
 
+\subsection{Weak formulation}
 
-\bibliographystyle{plain}
-\bibliography{}
+\begin{frame}{Weak formulation}
+The weak form of the problem is given by 
+\begin{equation*}
+  - \int^1_0 u''(x)v(x) - k^2u(x)v(x) \ \dd x = \int^1_0 f(x)v(x) \ \dd x,
+\end{equation*}
+where $v \in \HOzero$. We integrate the first term by parts to get
+\begin{equation*} \label{eq:weakprob}
+  \int^1_0 u'(x)v'(x)\ \dd x - k^2 \int^1_0 u(x)v(x) \ \dd x - iku(1)v(1) = \int^1_0 f(x)v(x) \ \dd x.
+\end{equation*}
+\end{frame}
+
+\subsection{Basis functions}
+
+\begin{frame}{Basis functions}
+We refine ours search space to the piecewise linear function $S_h(0, 1)$.
+
+This is spanned by the \emph{basis functions}, $j = 1, \ldots, N - 1$
+\begin{equation*}
+  \chi_j(x) = \begin{dcases*}
+    \frac{1}{h} (x - x_{j - 1}), & $x \in [x_{j - 1}, x_j],$ \\
+    \frac{1}{h} (x_{j + 1} - x), & $x \in [x_{j}, x_{j + 1}],$ \\
+    0 & elsewhere,
+  \end{dcases*}, \quad
+\end{equation*}
+\begin{equation*}
+  \chi_N(x) = \begin{dcases*}
+    \frac{1}{h} (x - x_{j - 1}), & $x \in [x_{j - 1}, 1],$ \\
+    0 & elsewhere.
+  \end{dcases*}
+\end{equation*}
+\end{frame}
+
+\subsection{Approximation}
+
+\begin{frame}{Approximation}
+  We require $U(x) \in S_h(0, 1)$, we can write
+  \begin{equation*}
+    U(x) = \sum_{j = 1}^N u_j \chi_j(x).
+  \end{equation*}
+
+  Our problem reduces to:
+\begin{equation*} \label{eq:linsys}
+  \begin{split}
+  \sum^N_{j = 1} \left[ \int^1_0 \chi_j'(x) \chi_m'(x) \ \dd x
+    - k^2 \int^1_0 \chi_j(x) \chi_m(x) \ \dd x \right] u_j
+    - i k u_N \chi_m(1)
+ \\ =
+    \int^1_0 f(x) \chi_m(x) \ \dd x,
+    \end{split}
+\end{equation*}
+for $m = 1, 2, \ldots, N$.
+\end{frame}
+
+\subsection{Linear system}
+
+\begin{frame}{Linear system}
+  This gives rise to a linear system of the form
+  \begin{equation*}
+    (A - k^2 B - i k C)u = f,
+  \end{equation*}
+  where
+\begin{equation*}
+  A_{i j} = \int^1_0 \chi_i'(x) \chi_j'(x) \ \dd x, \quad
+  B_{i j} = \int^1_0 \chi_i(x) \chi_j(x) \ \dd x.
+\end{equation*}
+\end{frame}
+
+\begin{frame}
+\begin{equation*}
+  A = \begin{pmatrix}
+        \frac{2}{h}   & - \frac{1}{h} & 0             & \hdots        & 0             \\
+        - \frac{1}{h} & \frac{2}{h}   & - \frac{1}{h} &  \ddots       & \vdots        \\
+        0             & - \frac{1}{h} & \frac{2}{h}   & \ddots        & 0             \\
+        \vdots        & \ddots        & \ddots        & \ddots        & - \frac{1}{h} \\
+        0             & \hdots        & 0             & - \frac{1}{h} & \frac{1}{h}
+      \end{pmatrix},
+  \quad
+  B = \begin{pmatrix}
+        \frac{2h}{3}  & \frac{h}{6}   & 0             & \hdots      & 0           \\
+        \frac{h}{6}   & \frac{2h}{3}  & \frac{h}{6}   & \ddots      & \vdots      \\
+        0             & \frac{h}{6}   & \frac{2h}{3}  & \ddots      & 0           \\
+        \vdots        & \ddots        & \ddots        & \ddots      & \frac{h}{6} \\
+        0             & \hdots        & 0             & \frac{h}{6} & \frac{h}{3}
+      \end{pmatrix},
+\end{equation*}
+\begin{equation*}
+  C = \begin{pmatrix}
+        0       & 0       & \hdots  & 0       \\
+        0       & 0       & \ddots  & \vdots  \\
+        \vdots  & \ddots  & \ddots  & 0       \\
+        0       & \hdots  & 0       & 1
+      \end{pmatrix},
+  \quad
+  \vct{u} = \begin{pmatrix}
+              u_1 \\
+              u_2 \\
+              \vdots \\
+              u_N
+            \end{pmatrix},
+  \quad
+  \vct{f} = \begin{pmatrix}
+              \int^1_0 f(x) \chi_1(x) \ \dd x \\
+              \int^1_0 f(x) \chi_2(x) \ \dd x \\
+              \vdots \\
+              \int^1_0 f(x) \chi_N(x) \ \dd x \\
+            \end{pmatrix}.
+\end{equation*}
+
+Matrix $(A - k^2 B - i k C)$ is \emph{sparse}, \emph{tridiagonal}. 
+\end{frame}
+
+\section{Difficulties and pitfalls}
+\subsection{Difficulties and pitfalls}
+\begin{frame}{Difficulties and pitfalls}
+Error estimate
+\begin{equation*} \label{eq:ErrEst}
+  \frac{\lVert u - U \rVert}{\lVert u \rVert} \leq C_1 k h + C_2 k^3
+  h^2,
+\end{equation*}
+where $C_1$, $C_2$ independent of $k, h$.
+
+\medskip
+\begin{center}
+  
+\emph{Higher wavenumber} $\rightarrow$ \emph{smaller mesh size}.
+\end{center}
+\medskip
+Size of linear system grows very rapidly, as does the \emph{bandwidth}
+of the system matrix.
+\end{frame}
+
+\subsection{Higher order problem}
+\begin{frame}{Higher order problem}
+  \begin{itemize}
+    \item Mesh generation non-trivial (Delaunay triangulation).
+    \item Rapidly growing linear system.
+    \item Higher wavenumber means more computational effort.
+  \end{itemize}
+
+  Remedy: order of piece wise polynomial search space functions.
+
+  \medskip
+  Special boundary conditions for unbounded domains: \emph{absorbent boundary condition},
+  \emph{non-reflecting boundary condition}.
+\end{frame}
+
+\section{Conclusion}
+
+\subsection{Conclusion}
+
+\begin{frame}{Conclusion}
+  \begin{itemize}
+    \item FDM is still used, but FEM is more flexible.
+    \item If the whole domain is important $\rightarrow$ use FEM.
+    \item Unbounded domains can be tackled using special BC's.
+    \item Sparse matrices with low bandwidth.
+  \end{itemize}
+
+  If you have an unbounded domain and are only interested in surface of
+  an object: use BEM.
+\end{frame}
+
+\begin{frame}
+\begin{center}
+  {\Large Thank you for listening}
+\end{center}
+\end{frame}
+%\bibliographystyle{plain}
+%\bibliography{}
 \end{document}
